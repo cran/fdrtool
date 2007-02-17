@@ -1,8 +1,8 @@
-### fdr.estimate.eta0.R  (2006-08-11)
+### pval.estimate.eta0.R  (2007-01-09)
 ###
 ###     Estimating the Proportion of Null p-Values
 ###
-### Copyright 2003-06 Korbinian Strimmer 
+### Copyright 2003-2007 Korbinian Strimmer 
 ###
 ### Parts of this code is adapted from 
 ### S-PLUS code (c) by Y. Benjamini (available from
@@ -42,21 +42,19 @@
 #=============================================================================
 #eta0: an estimate of the proportion of null p-values
 
-fdr.estimate.eta0 <- function(p,
+
+
+
+pval.estimate.eta0 <- function(p,
     method=c("smoother", "bootstrap", "conservative", "adaptive"),
     lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE)
 {
     method <- match.arg(method)
-        
-    
-    ########
-    
+            
     if (method == "conservative") # Benjamini and Hochberg (1995)
     {
         eta0 = 1.0
     }
-
-    ########
    
     if (method == "adaptive") # Benjamini and Hochberg (2000)
     {
@@ -76,76 +74,83 @@ fdr.estimate.eta0 <- function(p,
 	eta0 <- m0/m      
     }
 
-    ########
     if(method == "bootstrap" || method == "smoother")
     {
-    
-      # for the remaining methods we require a lambda vector
-      if (length(lambda)<4)
+      # for the remaining methods we a set of p-value thresholds
+      if (length(lambda) < 4)
         stop("At least 4 values in lambda tuning vector required")
     
-      eta0 <- rep(0,length(lambda))
+      e0.vec <- rep(0,length(lambda))
       for(i in 1:length(lambda))
       {
-        eta0[i] <- mean(p >= lambda[i])/(1-lambda[i])
+        e0.vec[i] <- mean(p >= lambda[i])/(1-lambda[i])
       }
     }
-        
-    ########
-   
+           
     if(method == "bootstrap") # Storey (2002) JRSSB
     {
-            m <- length(p)
-	    mineta0 <- min(eta0)
-            mse <- rep(0,length(lambda))
-            eta0.boot <- rep(0,length(lambda))
-            for(i in 1:100) {
-                p.boot <- sample(p,size=m,replace=TRUE)
-                for(i in 1:length(lambda)) {
-                    eta0.boot[i] <- mean(p.boot>lambda[i])/(1-lambda[i])
-                }
-                mse <- mse + (eta0.boot-mineta0)^2
-            }
-            eta0 <- min(eta0[mse==min(mse)])
-            eta0 <- min(eta0,1)
+      m <- length(p)
+      mineta0 <- min(e0.vec)
+      mse <- rep(0,length(lambda))
+      eta0.boot <- rep(0,length(lambda))
+      for(i in 1:100) 
+      {
+        p.boot <- sample(p,size=m,replace=TRUE)
+        for(i in 1:length(lambda)) 
+        {
+          eta0.boot[i] <- mean(p.boot>lambda[i])/(1-lambda[i])
+        }
+        mse <- mse + (eta0.boot-mineta0)^2
+      }
+      idx <- which.min(mse)[1]
+      lambda.min <- lambda[idx]
+      eta0 <- min(e0.vec[idx], 1)
+
+      if (diagnostic.plot)
+      {
+        get(getOption("device"))() # open new plot window
+        par(mfrow=c(2,1))
+        plot(lambda, e0.vec, ylab="eta0")
+        points( lambda.min, eta0, pch=20, col=2 )
+        plot(lambda, mse)
+        points( lambda.min, min(mse), pch=20, col=2 )
+        par(mfrow=c(1,1))
+      }
     }    
- 
-    ########
- 
+  
     if(method == "smoother") # Storey and Tibshirani (2003) PNAS
     {
-            seta0 <- smooth.spline(lambda,eta0,df=3)
-            eta0 <- predict(seta0,x=max(lambda))$y
-            eta0 <- min(eta0,1)
+      e0.spline <- smooth.spline(lambda, e0.vec, df=3)
+      eta0 <- min( predict(e0.spline, x=max(lambda))$y, 1)
+      
+      if (diagnostic.plot)
+      {
+        get(getOption("device"))() # open new plot window
+        plot(lambda, e0.vec, main="Smoothing Curve Employed For Estimating eta0", 
+          xlab="lambda", ylab="eta0")
+        lines( e0.spline )
+        points( max(lambda), eta0, pch=20, col=2 )
+      }
+
     } 
-    
-    #######
-    
+       
     if (diagnostic.plot)
     {
-      get(getOption("device"))() # this more platform-independent than X11()
+      get(getOption("device"))() # open new plot window
   
       info0 = paste("method =", method)
       info1 = paste("eta0 =", round(eta0, 4))
   
-      dpr = density.pr(p, plot=TRUE, df=30, 
+      h = hist(p, freq=FALSE, bre="FD", 
                     main="Diagnostic Plot:  Distribution of p-Values and Estimated eta0", xlim=c(0,1), 
                     xlab="p-values")
-   
-  
-      y0 = dunif(dpr$x)*eta0
-      lines(dpr$x, y0, col=2)
-      maxy = max(dpr$histogram$density)
+      y0 = dunif(h$breaks)*eta0
+      lines(h$breaks, y0, col=2)
+      maxy = max(h$density)
   
       text(0.5, 5/6*maxy, info0) 
-      text(0.5, 4/6*maxy, info1)  
+      text(0.5, 4/6*maxy, info1, col=2)  
     }
-    
-    
-    #######
-    
-    
-    
-    return(eta0)
-   
+     
+    return(eta0) 
 }

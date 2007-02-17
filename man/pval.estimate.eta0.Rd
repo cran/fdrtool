@@ -1,12 +1,12 @@
-\name{fdr.estimate.eta0}
-\alias{fdr.estimate.eta0}
+\name{pval.estimate.eta0}
+\alias{pval.estimate.eta0}
 \title{Estimate the Proportion of Null p-Values}
 \usage{
-fdr.estimate.eta0(p, method=c("smoother", "bootstrap", "conservative", "adaptive"),
-    lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE )
+pval.estimate.eta0(p, method=c("smoother", "bootstrap", "conservative", "adaptive"),
+    lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE)
 }
 \description{
-  \code{fdr.estimate.eta0} estimates the proportion eta0 of null p-values in a given
+  \code{pval.estimate.eta0} estimates the proportion eta0 of null p-values in a given
   vector of p-values. 
 }
 
@@ -16,10 +16,10 @@ fdr.estimate.eta0(p, method=c("smoother", "bootstrap", "conservative", "adaptive
      Available options are
     "conservative" , "adaptive", "bootstrap", and "smoother" (default).}
    \item{lambda}{optional tuning parameter vector needed for "bootstrap"
-     and "smoothing" methods (defaults to \code{seq(0,0.95,0.05)})
+     and "smoothing" methods (defaults to \code{seq(0,0.9,0.05)})
      - see Storey (2002) and Storey and Tibshirani (2003).}
    \item{diagnostic.plot}{if \code{TRUE} (the default) the histogram of the p-values together
-          with the estimate eta0 null line is plotted.  This is useful to
+          with the estimate of \code{eta0} null line is plotted.  This is useful to
 	  visually check the fit of the estimated proportion of null p-values.}  
   }
 
@@ -32,7 +32,7 @@ This quantity \code{eta0}, i.e.  the proportion eta0 of null p-values in a given
   and power 
   - see   Benjamini and Hochberg (1995, 2000) and Storey (2002) for details.
 
-The function \code{fdr.estimate.eta0} provides four algorithms: the "conservative"
+The function \code{pval.estimate.eta0} provides four algorithms: the "conservative"
 method always returns eta0 = 1  (Benjamini and Hochberg, 1995), "adaptive"
 uses the approach suggested in Benjamini and Hochberg (2000), "bootstrap"
 employs the method from Storey (2002), and "smoother" uses the smoothing spline
@@ -67,25 +67,18 @@ approach in Storey and Tibshirani (2003).
   Adapted in part from S-PLUS code by  Y. Benjamini (\url{http://www.math.tau.ac.il/~roee/FDR_Splus.txt})
   and R code from J.D. Storey (\url{http://faculty.washington.edu/~jstorey/}). 
 }
-\seealso{\code{\link{fdr.control}}.}
+\seealso{\code{\link{fdrtool}}.}
 
 \examples{
-# load fdrtool library and p-values
+# load "fdrtool" library and p-values
 library("fdrtool")
-data(pval)
+data(pvalues)
 
 
 # Proportion of null p-values for different methods
-fdr.estimate.eta0(pval, method="conservative")
-fdr.estimate.eta0(pval, method="adaptive")
-fdr.estimate.eta0(pval, method="bootstrap")
-fdr.estimate.eta0(pval, method="smoother")
-
-
-# FDR test on the level 0.05 using the default "smoother" method
-fdr.control(pval, Q = 0.05)$num.significant 
-
-# FDR test on the level 0.05 using the conservative choice eta0=1
-fdr.control(pval, Q = 0.05, method="conservative")$num.significant  
+pval.estimate.eta0(pvalues, method="conservative")
+pval.estimate.eta0(pvalues, method="adaptive")
+pval.estimate.eta0(pvalues, method="bootstrap")
+pval.estimate.eta0(pvalues, method="smoother")
 }
 \keyword{htest}

@@ -1,4 +1,31 @@
 
+
+		CHANGES IN fdrtool VERSION 1.1.0
+
+This version contains some major new functionality.  In particular, it 
+now offers functions to estimate both tail area based Fdr as well as 
+density based fdr values for various kind of null models:
+
+New functions:
+- fdrtool:       the central function for computing fdr/Fdr values.
+- censored.fit:  learn null model from censored sample
+- monoreg:       isotonic and antitonic regression with weights
+- gcmlcm:        find greatest convex minorant and least concave majorant
+- grenander:     non-parametric estimate of concave CDF and decreasing density
+- halfnormal:    functions for half-normal distribution
+- dcor0:         distribution of vanishing correlation coefficient
+
+Removed functions:
+- fdr.estimate.eta0:   was replaced by pval.estimate.eta()
+- fdr.control:         the function fdrtool() should be used.
+- density.pr:          not needed any more
+
+Other:
+- dependency on locfdr package removed
+- fdrtool now requires R 2.2.1
+
+
+
 		CHANGES IN fdrtool VERSION 1.0.0
 
 
