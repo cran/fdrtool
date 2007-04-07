@@ -3,7 +3,7 @@
 \title{Estimate (Local) False Discovery Rates For Diverse Test Statistics}
 \usage{
 fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL)
+  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE)
 }
 \description{
   \code{fdrtool} takes a vector of z-scores (or of correlations, p-values,
@@ -20,10 +20,14 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
                    "studentt".  This species the null model.}
   \item{plot}{plot a figure with estimated densities, distribution functions, 
              and (local) false discovery rates.}
+  \item{verbose}{print out status messages.}
   \item{censored.fit.arg}{list with arguments passed on to 
                               \code{\link{censored.fit}}.}
   \item{pval.estimate.eta0.arg}{list with arguments passed on to 
                                  \code{\link{pval.estimate.eta0}}.}
+  \item{use.locfdr}{employ the locfdr package for estimation eta0 and 
+        scale parameter (only for "normal" and "correlation" statistic).}
+
 }
 \details{
   The algorithm implemented in this function proceeds as follows:
@@ -83,6 +87,6 @@ z = c(z, runif(30, 5, 10)) # add some contamination
 fdr <- fdrtool(z)
 
 # you may change some parameters of the underlying functions
-fdr <- fdrtool(z, censored.fit.arg=list( pct=.9)) 
+fdr <- fdrtool(z, censored.fit.arg=list( pct0=0.9)) 
 }
 \keyword{htest}

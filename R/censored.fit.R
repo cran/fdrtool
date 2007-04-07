@@ -1,4 +1,4 @@
-### censored.fit.R  (2007-02-07)
+### censored.fit.R  (2007-04-03)
 ###
 ###     Fit Null Distribution To Censored Data
 ###
@@ -42,7 +42,8 @@
 
 censored.fit <- function(x, 
    statistic=c("normal", "correlation", "studentt"),
-   pct0=3/4,  method=c("MM", "ML"))
+   pct0=0.75,  method=c("MM", "ML"), 
+   diagnostic.plot=FALSE)
 {
     statistic <- match.arg(statistic)
     method <- match.arg(method)
@@ -50,7 +51,6 @@ censored.fit <- function(x,
     if ( !is.vector(x) ) stop("x needs to be a vector!")
     if ( length(x) < 100 ) warning("estimates may be unreliable as length(x) = ", length(x))
 
-    diagnostic.plot=TRUE  # only if smooth = TRUE
 
     if (length(pct0) > 1) smooth=TRUE 
     else smooth=FALSE
@@ -65,18 +65,29 @@ censored.fit <- function(x,
           sc.vec[i] <- pvt.censored.fit1(x, x0[i], statistic=statistic)$param
         else # method=="MM"
           sc.vec[i] <- pvt.censored.fit2(x, x0[i], statistic=statistic)$param
+
+          #cat("DEBUG: pct0=", pct0[i], "   sd=",  sc.vec[i], "\n")
       }
-      sc.spline <- smooth.spline(pct0, sc.vec,df=3)
-      sc.param <- predict(sc.spline, x=min(pct0))$y
+
       
+
+      sc.spline <- smooth.spline(pct0, sc.vec,df=3)
+      sd.pred <- predict(sc.spline, x=pct0)$y
+      
+      #sd.pred <- sc.vec
+
+      sc.param <- min(sd.pred)[1] # choose smallest sd
+ 
       if (diagnostic.plot)
       {
         get(getOption("device"))() # open new plot window
         plot(pct0, sc.vec, main="Smoothing Curve Employed For Estimating scale parameter", 
           xlab="pct0", ylab="estimated sd")
         lines( sc.spline )
-        points( min(pct0), sc.param, pch=20, col=2 )
-      }
+        
+        points( pct0[which.min(sd.pred)[1]], sc.param, pch=20, col=2 )
+        get(getOption("device"))()
+       }
     }
     else # length(pct0) = 1
     {
@@ -112,6 +123,4 @@ censored.fit <- function(x,
 
     return(sc.param)
 }
-
-
 

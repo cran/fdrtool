@@ -1,4 +1,4 @@
-### fdrtool.R  (2007-02-17)
+### fdrtool.R  (2007-04-05)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
@@ -26,17 +26,50 @@
  
 fdrtool <- function(x, 
   statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL)
+  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE)
 {
   statistic <- match.arg(statistic)
   ax = abs(x) 
 
   if (statistic=="pvalue") ax = 1-ax  # reverse p-val plot 
 
+  if (use.locfdr==TRUE & (statistic=="normal" | statistic=="correlation"))
+  {
+    require("locfdr")
+    
+    if(verbose) cat("Step 1... fit null distribution and estimate eta0\n")
+    if (statistic=="normal") z <- x
+    if (statistic=="correlation") z <- atanh(x)
+
+    locfdr.out = locfdr(z, plot=0)
+    fitpar <- locfdr.out$fp0
+
+    eta0 <- fitpar[3, 3]
+    sigma <- fitpar[3,2]
+    if (statistic=="normal")
+    {   
+       cf.param <- sigma
+       attr(cf.param, "names") <- c("sd")
+    }
+
+    if (statistic=="correlation")
+    {
+       cf.param <- 1/(sigma*sigma) + 2
+       attr(cf.param, "names") <- c("kappa")
+    }
+    
+    if(verbose) cat("Step 2... compute p-values\n")   
+    nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
+    pval = 1- nf$F0(ax)
+
+  }
+  else
+  {###
+
   
 #### step 1 ####
 
-  cat("Step 1... fit null distribution\n")
+  if(verbose) cat("Step 1... fit null distribution\n")
 
   # determine parameters of null distribution
   if (statistic != "pvalue")
@@ -47,7 +80,7 @@ fdrtool <- function(x,
 
 #### step 2 ####
 
-  cat("Step 2... compute p-values and estimate eta0\n")
+  if(verbose) cat("Step 2... compute p-values and estimate eta0\n")
 
   nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
   pval = 1- nf$F0(ax)
@@ -56,9 +89,11 @@ fdrtool <- function(x,
   eta0 <- do.call("pval.estimate.eta0", c(list(p=pval, diagnostic.plot=FALSE),
              pval.estimate.eta0.arg ) ) 
  
+  }###
+  
 #### step 3 ####
 
-  cat("Step 3... estimate empirical PDF/CDF of p-values (this may take a while!)\n")
+  if(verbose) cat("Step 3... estimate empirical PDF/CDF of p-values (this may take a while!)\n")
 
   # determine cumulative empirical distribution function (pvalues)
   ee <- ecdf.pval(pval, eta0=eta0)
@@ -82,7 +117,7 @@ fdrtool <- function(x,
 
 #### step 4 ####
 
-  cat("Step 4... compute q-values and local fdr for each case\n")
+  if(verbose) cat("Step 4... compute q-values and local fdr for each case\n")
 
   qval <- Fdr.pval(pval) 
   lfdr <- fdr.pval(pval)
@@ -105,7 +140,7 @@ fdrtool <- function(x,
 
   if (plot)
   {
-    cat("Step 5... prepare for plotting\n")
+    if(verbose) cat("Step 5... prepare for plotting\n")
 
     fdr <- function(ax) return( fdr.pval( 1- nf$F0(ax) ) )
     Fdr <- function(ax) return( Fdr.pval( 1- nf$F0(ax) ) )
@@ -151,6 +186,8 @@ fdrtool <- function(x,
     par(mfrow=c(1,1))
 
   }
+
+  if(verbose) cat("\n")
 
   return(nm)
 }

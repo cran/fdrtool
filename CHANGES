@@ -1,5 +1,20 @@
 
 
+                CHANGES IN fdrtool VERSION 1.1.1
+
+
+- the default behaviour of censored.fit() has been changed
+  such that for multiple pct0 (i.e. length(pct0) > 1) the scale 
+  parameter is estimated for each element of pct0, subsequently 
+  a smoothing spline is computed, and finally the optimal parameter 
+  is taken as the minimum of the spline smoother.
+- new "verbose" option in fdrtool()
+- new "diagnostic.plot" option in censored.fit()
+- option to rely on locfdr >= 1.1-4 for fitting null distribution
+  of correlation and normal scores
+
+
+
 		CHANGES IN fdrtool VERSION 1.1.0
 
 This version contains some major new functionality.  In particular, it 

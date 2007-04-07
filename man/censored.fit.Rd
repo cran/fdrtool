@@ -5,7 +5,7 @@
 
 \usage{
 censored.fit(x, statistic=c("normal", "correlation", "studentt"), 
-  pct0=3/4,  method=c("MM", "ML"))
+  pct0=0.75,  method=c("MM", "ML"), diagnostic.plot=FALSE)
 }
 
 \description{
@@ -16,18 +16,23 @@ censored.fit(x, statistic=c("normal", "correlation", "studentt"),
 \arguments{
   \item{x}{vector of test statistics.}
   \item{statistic}{type of statistic - normal, correlation, or student t.}
-  \item{pct0}{fraction of data used to fit null distribution.}
-  \item{method}{procedure used to fit null distibution, either of MM (=median matching, the default)
-        or ML (maximum likelihood).}
+  \item{pct0}{fraction of data used to fit null distribution.  If multipe pct0 are
+              specified the fit is performed for each value, and the 
+              null distribution with smallest variance is chosen.}
+  \item{method}{procedure used to fit null distibution, either ML (maximum likelihood)
+         or MM (=median matching, the default).}
+  \item{diagnostic.plot}{for \code{length(pct0) > 1} plot the estimated 
+   variances in dependence of the pct0 parameter.}
 }
 \details{
-   For the default method (median matching), the median of the truncated 
+   For median matching, the median of the truncated 
    half-normal distribution (or the equivalent for correlation and student t distribution) 
    is matched to the median of the absolute values of the censored sample.
+   Note that if length(x) is small then median matching is less efficient than maximum likelihood.
 
    For maximum likelihood the truncated density is fit to the censored    
-   sample - this can be quite time consuming for large data set (and there
-   may be convergence problems).
+   sample.  As this can be quite time consuming for large data set (and as there
+   may be convergence problems) this is not the default method.
 }
 \value{
 
