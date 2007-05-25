@@ -1,4 +1,4 @@
-### fdrtool.R  (2007-04-05)
+### fdrtool.R  (2007-05-25)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
@@ -26,7 +26,8 @@
  
 fdrtool <- function(x, 
   statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE)
+  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, 
+  pval.estimate.eta0.arg=NULL, use.locfdr=TRUE, ...)
 {
   statistic <- match.arg(statistic)
   ax = abs(x) 
@@ -41,7 +42,7 @@ fdrtool <- function(x,
     if (statistic=="normal") z <- x
     if (statistic=="correlation") z <- atanh(x)
 
-    locfdr.out = locfdr(z, plot=0)
+    locfdr.out = locfdr(z, plot=0, ...)
     fitpar <- locfdr.out$fp0
 
     eta0 <- fitpar[3, 3]
@@ -155,7 +156,7 @@ fdrtool <- function(x,
     ll = pvt.plotlabels(statistic, cf.param, eta0)
 
     par(mfrow=c(3,1))
-    hist(ax, freq=FALSE, #bre=30,
+    hist(ax, freq=FALSE, bre=50,
       main=ll$main, xlab=ll$xlab, cex.main=1.8)
     lines(xxx, eta0*nf$f0(xxx), col=2, lwd=2, lty=3 )
     #lines(xxx, f(xxx), col=1, lwd=1 ) # show histogram instead

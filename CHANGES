@@ -1,3 +1,7 @@
+                CHANGES IN fdrtool VERSION 1.1.2
+
+- fdrtool() now has "dots" as option to allow the specification
+  of arguments for the locfdr function
 
 
                 CHANGES IN fdrtool VERSION 1.1.1

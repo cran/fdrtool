@@ -1,6 +1,6 @@
 Package: fdrtool
-Version: 1.1.1
-Date: 2007-04-07
+Version: 1.1.2
+Date: 2007-05-25
 Title: Estimation and Control of (Local) False Discovery Rates
 Author: Korbinian Strimmer.
 Maintainer: Korbinian Strimmer <strimmer@uni-leipzig.de>
@@ -17,4 +17,4 @@ Description: This package allows to estimate both tail area-based
    majorant (LCM), and for the half-normal and correlation distribution.
 License: GPL version 2 or newer
 URL: http://strimmerlab.org/software/fdrtool/
-Packaged: Sun Apr  8 00:40:54 2007; strimmer
+Packaged: Fri May 25 19:46:37 2007; strimmer

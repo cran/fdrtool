@@ -3,7 +3,7 @@
 \title{Estimate (Local) False Discovery Rates For Diverse Test Statistics}
 \usage{
 fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE)
+  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE, \dots)
 }
 \description{
   \code{fdrtool} takes a vector of z-scores (or of correlations, p-values,
@@ -27,6 +27,7 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
                                  \code{\link{pval.estimate.eta0}}.}
   \item{use.locfdr}{employ the locfdr package for estimation eta0 and 
         scale parameter (only for "normal" and "correlation" statistic).}
+  \item{\dots}{parameters passed on to the locfdr function (e.g. df).}
 
 }
 \details{
