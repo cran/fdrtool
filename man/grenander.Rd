@@ -2,16 +2,17 @@
 \alias{grenander}
 \alias{plot.grenander}
 
-\title{Grenander Estimator of a Decreasing Density}
+\title{Grenander Estimator of a Decreasing or Increasing Density}
 \description{
   The function \code{grenander} computes the Grenander estimator
-  of a one-dimensional decreasing density. 
+  of a one-dimensional decreasing or increasing density. 
 }
 \usage{
-grenander(F)
+grenander(F, type=c("decreasing", "increasing"))
 }
 \arguments{
   \item{F}{an \code{\link{ecdf}} containing the empirical cumulative density.}
+  \item{type}{specifies whether the distribution is decreasing (the default) or increasing.}
 }
 \details{
   The Grenander (1956) density estimator is given by the slopes of the 
@@ -19,7 +20,8 @@ grenander(F)
   It is a decreasing piecewise-constant function and can be shown to be the 
   non-parametric maximum likelihood estimate (NPMLE) under the assumption
   of a decreasing density (note that the ECDF is the NPMLE without
-  this assumption).
+  this assumption).  Similarly, an increasing density function is obtained
+  by using the greatest convex minorant (GCM) of the ECDF.
 }
 \value{
   A list of class \code{grenander} with the following components:
@@ -50,7 +52,9 @@ z = rexp(30,1)
 e = ecdf(z)
 g = grenander(e)
 g
-plot(g) # plot ecdf, concave cdf, and Grenander estimator
+
+# plot ecdf, concave cdf, and Grenander density estimator (on log scale)
+plot(g, log="y") 
 
 # for comparison the kernel density estimate
 plot(density(z)) 

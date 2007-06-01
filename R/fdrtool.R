@@ -1,4 +1,4 @@
-### fdrtool.R  (2007-05-25)
+### fdrtool.R  (2007-06-01)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
@@ -34,6 +34,9 @@ fdrtool <- function(x,
 
   if (statistic=="pvalue") ax = 1-ax  # reverse p-val plot 
 
+  if (statistic=="pvalue" & max(ax) > 1)
+    stop("input p-values must all be in the range 0 to 1!")
+
   if (use.locfdr==TRUE & (statistic=="normal" | statistic=="correlation"))
   {
     require("locfdr")
@@ -61,7 +64,8 @@ fdrtool <- function(x,
     
     if(verbose) cat("Step 2... compute p-values\n")   
     nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
-    pval = 1- nf$F0(ax)
+    get.pval <- function(zeta) return( 1- nf$F0(zeta) )
+    pval = get.pval(ax)
 
   }
   else
@@ -84,7 +88,8 @@ fdrtool <- function(x,
   if(verbose) cat("Step 2... compute p-values and estimate eta0\n")
 
   nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
-  pval = 1- nf$F0(ax)
+  get.pval <- function(zeta) return( 1- nf$F0(zeta) )
+  pval = get.pval(ax)
 
   # determine eta0
   eta0 <- do.call("pval.estimate.eta0", c(list(p=pval, diagnostic.plot=FALSE),
@@ -105,14 +110,14 @@ fdrtool <- function(x,
   #cat("DEBUG: estimated eta0=", eta0 , "\n\n")
 
   # mixture density and CDF  
-  f.pval = approxfun( g.pval$x.knots,  g.pval$f.knots, method="constant" )
+  f.pval = approxfun( g.pval$x.knots,  g.pval$f.knots, method="constant", rule=2)
   f0.pval = function(x) return( ifelse(x > 1 | x < 0, 0, rep(1, length(x))) )  
 
   F.pval = approxfun( g.pval$x.knots,  g.pval$F.knots, method="linear", 
            yleft=0, yright=g.pval$F.knots[length(g.pval$F.knots)])
   F0.pval = function(x) return( ifelse(x > 1, 1, ifelse(x < 0, 0, x )) )
 
-  fdr.pval = function(p) pmin( eta0 / f.pval(p), 1)   # eta0*f0/ f
+  fdr.pval = function(p) pmin( eta0   / f.pval(p), 1) # eta0*f0/ f
   Fdr.pval = function(p) pmin( eta0*p / F.pval(p), 1) # eta0*F0/ F
   
 
@@ -143,19 +148,21 @@ fdrtool <- function(x,
   {
     if(verbose) cat("Step 5... prepare for plotting\n")
 
-    fdr <- function(ax) return( fdr.pval( 1- nf$F0(ax) ) )
-    Fdr <- function(ax) return( Fdr.pval( 1- nf$F0(ax) ) )
+    fdr = function(zeta)  fdr.pval(get.pval(zeta)) 
+    Fdr = function(zeta)  Fdr.pval(get.pval(zeta)) 
      
-    F  = function(ax) 1-eta0*(1-nf$F0(ax))/Fdr(ax) 
-    FA = function(ax) (F(ax)-eta0*nf$F0(ax))/(1-eta0)		
+    F   = function(zeta)  1-eta0*get.pval(zeta)/Fdr(zeta) 
+    FA  = function(zeta)  (F(zeta)-eta0*nf$F0(zeta))/(1-eta0)		
 
-    f = function(ax) eta0*(nf$f0(ax))/fdr(ax) 
-    fA = function(ax) (f(ax)-eta0*nf$f0(ax))/(1-eta0)		
+    f   = function(zeta)  eta0*(nf$f0(zeta))/fdr(zeta) 
+    fA  = function(zeta)  (f(zeta)-eta0*nf$f0(zeta))/(1-eta0)		
+
 
     xxx = seq(0, max(ax), length.out=200)
     ll = pvt.plotlabels(statistic, cf.param, eta0)
 
     par(mfrow=c(3,1))
+
     hist(ax, freq=FALSE, bre=50,
       main=ll$main, xlab=ll$xlab, cex.main=1.8)
     lines(xxx, eta0*nf$f0(xxx), col=2, lwd=2, lty=3 )
@@ -182,7 +189,6 @@ fdrtool <- function(x,
     legend(pos2, 
       c("fdr (density-based)", "Fdr (tail area-based)"), 
       lwd=c(2,2), col=c(1,1), lty=c(1,3), bty="n", cex=1.5)
-
 
     par(mfrow=c(1,1))
 
@@ -232,14 +238,18 @@ pvt.plotlabels <- function(statistic, cf.param, eta0)
    return(list(main=main, xlab=xlab))
 }
 
+
 pvt.nullfunction <- function(statistic, cf.param)
 {
+   MEPS=1-1e-7
+
    if (statistic!="pvalue") attr(cf.param, "names") <- NULL
 
    if (statistic=="pvalue")
    {
      f0 = function(x) rep(1, length(x))
      F0 = function(x) x
+     MEPS=1
    }
 
    if (statistic=="studentt")
@@ -263,31 +273,9 @@ pvt.nullfunction <- function(statistic, cf.param)
      F0 = function(x) 2*pcor0(x, kappa=kappa)-1 
    }
 
-   checkf0 = function(ax) pmax(f0(ax),0) # make sure f0 is in [0,Inf]
-   checkF0 = function(ax) pmax(pmin(F0(ax),1),0) # make sure F0 is in [0,1]
+   checkf0 = function(x) pmax(f0(x),0)         # make sure f0 > 0
+                                               # make sure F0 is in [0,MEPS]
+   checkF0 = function(x) ifelse(x==Inf, 1, pmax(pmin(F0(x),MEPS),0) ) 
 
    return(list(f0=checkf0, F0=checkF0))
  }
-
-# empirical cumulative distribution of p-values,
-# constrained such that the known fraction of null p-values is taken into account
-ecdf.pval <- function (x, eta0=1) 
-{
-    x <- sort(x)
-    n <- length(x)
-    if (n < 1) 
-        stop("'x' must have 1 or more non-missing values")
-    vals <- sort(unique(x))
-    F.raw <- cumsum(tabulate(match(x, vals)))/n
-    
-    # this is the bit that makes sure that the gradient of 1-F(1-pval) is >= eta0 
-    F.raw <- pmin(F.raw, 1-eta0*(1-vals) ) 
-    
-    rval <- approxfun(vals, F.raw, 
-        method = "constant", yleft = 0, yright = 1, f = 0, ties = "ordered")
-    class(rval) <- c("ecdf", "stepfun", class(rval))
-    attr(rval, "call") <- sys.call()
-    rval
-}
-
-

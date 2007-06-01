@@ -1,8 +1,8 @@
-### grenander.R  (2007-02-14)
+### grenander.R  (2007-06-13)
 ###
 ###     Grenander Density Estimator
 ###
-### Copyright 2006 Korbinian Strimmer 
+### Copyright 2006-2007 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -22,12 +22,23 @@
 ### MA 02111-1307, USA
 
 
-grenander = function(F)
+grenander = function(F, type=c("decreasing", "increasing"))
 {
   if( !any(class(F) == "ecdf") ) stop("ecdf object required as input!")
 
-  # find least concave majorant of ECDF
-  ll = gcmlcm(environment(F)$x, environment(F)$y, type="lcm")
+  type <- match.arg(type)
+
+  if (type == "decreasing")
+  {
+    # find least concave majorant of ECDF
+    ll = gcmlcm(environment(F)$x, environment(F)$y, type="lcm")
+  }
+  else
+  {
+    # find greatest convex minorant of ECDF
+    l = length(environment(F)$y)
+    ll = gcmlcm(environment(F)$x, c(0,environment(F)$y[-l]), type="gcm")
+  }
 
   f.knots = ll$slope.knots
   f.knots = c(f.knots, f.knots[length(f.knots)])
@@ -44,10 +55,15 @@ grenander = function(F)
 
 plot.grenander <- function(x, ...)
 {
+  if (x$f.knots[1] > x$f.knots[2])
+    main = "Grenander Decreasing Density"
+  else
+    main = "Grenander Increasing Density"
+
   par(mfrow=c(1,2))
 
   plot(x$x.knots, x$f.knots, type="s", xlab="x", ylab="fn(x)",
-     main="Grenander Decreasing Density", col=4, lwd=2, log="y", ...)
+     main=main, col=4, lwd=2, ...)
  
   plot(x$F, do.points=FALSE)
   lines(x$x.knots, x$F.knots, type='l', col=4, lwd=2)
