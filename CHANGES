@@ -1,4 +1,11 @@
-   
+ 
+             CHANGES IN fdrtool VERSION 1.1.4
+
+ - monoreg(), the monotone regression function, is mow partly 
+   written in C. This allows for much faster computation of the
+   FDR calculations (which are based on the modified Grenander estimator.
+
+  
              CHANGES IN fdrtool VERSION 1.1.3
 
  - fixed a bug in plotting the F und FA distribution functions 

@@ -99,7 +99,7 @@ fdrtool <- function(x,
   
 #### step 3 ####
 
-  if(verbose) cat("Step 3... estimate empirical PDF/CDF of p-values (this may take a while!)\n")
+  if(verbose) cat("Step 3... estimate empirical PDF/CDF of p-values\n")
 
   # determine cumulative empirical distribution function (pvalues)
   ee <- ecdf.pval(pval, eta0=eta0)

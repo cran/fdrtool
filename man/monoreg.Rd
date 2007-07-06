@@ -4,14 +4,14 @@
 \alias{fitted.monoreg}
 \alias{residuals.monoreg}
 
-\title{Monotonic Regression}
+\title{Monotone Regression: Isotonic Regression and Antitonic Regressio}
 
 \usage{
 monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
 }
 
 \description{
-  \code{monoreg} performs monotonic regression (either isotonic
+  \code{monoreg} performs monotone regression (either isotonic
   or antitonic) with weights. 
 }
 
@@ -48,7 +48,7 @@ monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
   \item{y}{the corresponding y values}
   \item{w}{the corresponding weights}
   \item{yf}{the fitted y values}
-  \item{type}{the type of monotonic regression ("isotonic" or "antitonic"}
+  \item{type}{the type of monotone regression ("isotonic" or "antitonic"}
   \item{call}{the function call}
 }
 
@@ -61,7 +61,8 @@ monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
 \author{
   Korbinian Strimmer (\url{http://strimmerlab.org}).
   
-  Part of this function is based on R code by Kaspar Rufibach. 
+  Part of this function is C code that has been ported from
+  R code orginally written by Kaspar Rufibach. 
 }
 \seealso{\code{\link{isoreg}}.}
 

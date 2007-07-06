@@ -1,11 +1,8 @@
-### monoreg.R  (2006-09-10)
+### monoreg.R  (2007-07-06)
 ###
-###     Monotonic Regression
+###     Monotone Regression
 ###
-### Copyright 2006 Korbinian Strimmer 
-###
-### Parts of this code is adapted from 
-### R code (c) 2004 by Kaspar Rufibach
+### Copyright 2006-2007 Korbinian Strimmer 
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
@@ -24,7 +21,7 @@
 ### MA 02111-1307, USA
 
 
-# monotonic regression
+# monotone regression
 
 monoreg = function(x, y=NULL, w=rep(1, length(x)), 
    type=c("isotonic", "antitonic"))
@@ -109,7 +106,7 @@ residuals.monoreg = function(object, ...) object$y - fitted(object)
 plot.monoreg = function(x, main, main2,
      plot.type = c("single", "row.wise", "col.wise"), ...)
 {
-  plot.type <- match.arg(plot.type)
+  plot.type = match.arg(plot.type)
   if (plot.type=="row.wise") par(mfrow=c(2,1))
   if (plot.type=="col.wise") par(mfrow=c(1,2))
   
@@ -154,8 +151,6 @@ plot.monoreg = function(x, main, main2,
 
 ######## internal function ###################
 
-# this code is by Kaspar Rufibach / June 2004
-
 pvt.isoMean = function(y, w)
 {
   # Input:	y: measured values in a regression setting
@@ -163,39 +158,19 @@ pvt.isoMean = function(y, w)
   # Output: 	vector containing estimated (isotonic) values
 
   n = length(y)
-  k = rep(0,n)
-  gew = rep(0,n)
-  ghat = rep(0,n)
-  
-  c = 1
-  k[c] = 1
-  gew[c] = w[1]
-  ghat[c] = y[1]
 
-  for (j in 2:n)
-  {		
-    c = c+1
-    k[c] = j
-    gew[c] = w[j]
-    ghat[c] = y[j]
-
-    while (c>=2 && ghat[max(1,c-1)] >= ghat[c])
-    {
-      neu = gew[c]+gew[c-1]
-      ghat[c-1] = ghat[c-1]+(gew[c]/neu)*(ghat[c]-ghat[c-1])
-      gew[c-1] = neu
-      c = c-1
-    }
-  }
-    
-  while (n>=1)
+  if(n == 1)
   {
-    for (j in k[c]:n)
-    {
-      ghat[j] = ghat[c]
-    }
-    n = k[c]-1
-    c = c-1
+    return(y)
   }
-  return(ghat)
+  else
+  {
+    ghat = .C("C_isomean",
+            as.double(y),
+            as.double(w),
+            as.integer(n),
+            ghat=double(n), PACKAGE="fdrtool", DUP=FALSE)$ghat
+
+    return(ghat)
+  }
 }
