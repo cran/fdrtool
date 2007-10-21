@@ -1,8 +1,8 @@
-### censored.fit.R  (2007-04-03)
+### censored.fit.R  (2007-10-13)
 ###
-###     Fit Null Distribution To Censored Data
+###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
-### Copyright 2006 Korbinian Strimmer 
+### Copyright 2006-07 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -22,105 +22,156 @@
 ### MA 02111-1307, USA
 
 
-# estimate parameters of null distribution using censored data
-
+# estimate parameters of null distribution 
+# using using truncated distributions
 # available null distributions
 # - normal (with mean zero)
 # - correlation (with rho zero)
 # - student t
+# - uniform
 
 
-# Methods:
-# - maximum likelihood (ML) fit 
-# - MM median matching  
-# truncated density to censored sample
-
-
-# pct0 = seq(0.7, 1.0, 0.02)
-# pct0 = 3/4
-
-
-censored.fit <- function(x, 
-   statistic=c("normal", "correlation", "studentt"),
-   pct0=0.75,  method=c("MM", "ML"), 
-   diagnostic.plot=FALSE)
+censored.fit = function(x, cutoff,
+   statistic=c("normal", "correlation", "pvalue", "studentt"))
 {
-    statistic <- match.arg(statistic)
-    method <- match.arg(method)
+    statistic = match.arg(statistic)
+    cutoff = abs(cutoff)
 
     if ( !is.vector(x) ) stop("x needs to be a vector!")
-    if ( length(x) < 100 ) warning("estimates may be unreliable as length(x) = ", length(x))
-
-
-    if (length(pct0) > 1) smooth=TRUE 
-    else smooth=FALSE
-
-    if (smooth)
-    {
-      x0 = quantile(abs(x), probs=pct0)
-      sc.vec = rep(NA, length(x0))
-      for(i in 1:length(x0))
-      {
-        if (method=="ML")
-          sc.vec[i] <- pvt.censored.fit1(x, x0[i], statistic=statistic)$param
-        else # method=="MM"
-          sc.vec[i] <- pvt.censored.fit2(x, x0[i], statistic=statistic)$param
-
-          #cat("DEBUG: pct0=", pct0[i], "   sd=",  sc.vec[i], "\n")
-      }
-
-      
-
-      sc.spline <- smooth.spline(pct0, sc.vec,df=3)
-      sd.pred <- predict(sc.spline, x=pct0)$y
-      
-      #sd.pred <- sc.vec
-
-      sc.param <- min(sd.pred)[1] # choose smallest sd
- 
-      if (diagnostic.plot)
-      {
-        get(getOption("device"))() # open new plot window
-        plot(pct0, sc.vec, main="Smoothing Curve Employed For Estimating scale parameter", 
-          xlab="pct0", ylab="estimated sd")
-        lines( sc.spline )
-        
-        points( pct0[which.min(sd.pred)[1]], sc.param, pch=20, col=2 )
-        get(getOption("device"))()
-       }
-    }
-    else # length(pct0) = 1
-    {
-      x0 = quantile(abs(x), probs=pct0)
-      if (method=="ML")
-        sc.param <- pvt.censored.fit1(x, x0, statistic=statistic)$param
-      else # method=="MM"
-        sc.param <- pvt.censored.fit2(x, x0, statistic=statistic)$param
-    }
-
-
-    ## the optimization is done on the level of "sd" parameter
-    ## convert back to natural parameter
-
-    if (statistic=="normal")
-    {  
-      attr(sc.param, "names") <- "sd"
-    }
-
-    if (statistic=="correlation")
-    {  
-      sc.param = 1/sc.param^2    # kappa
-      attr(sc.param, "names") <- "kappa"
-    }
-
-    if (statistic=="studentt")
-    {  
-      sc.param = sc.param*sc.param  # var
-      sc.param = 2*sc.param/(sc.param-1)  # df
     
-      attr(sc.param, "names") <- "df"
+    
+    if (statistic=="pvalue")
+    {
+      result = matrix(nrow=length(cutoff), ncol=4)
+      colnames(result)= c("cutoff", "N0", "eta0", "eta0.SE")
+    }
+    else
+    {
+      result = matrix(nrow=length(cutoff), ncol=6)
+      colnames(result)= c("cutoff", "N0", "eta0", "eta0.SE", "sd", "sd.SE")
+    }
+    if (statistic=="correlation") colnames(result)[5] = "kappa"
+    if (statistic=="studentt") colnames(result)[5] = "df"
+    if (statistic=="correlation") colnames(result)[6] = "kappa.SE"
+    if (statistic=="studentt") colnames(result)[6] = "df.SE"
+
+    
+    for (i in 1:length(cutoff))
+    {
+      x0 = cutoff[i]
+      result[i,1] = x0
+
+      out = pvt.fit.nullmodel(x, x0, statistic=statistic)
+      result[i,2] = out$N0
+      result[i,3] = out$eta0
+      result[i,4] = out$eta0.SE
+
+      if (statistic!="pvalue")
+      {
+         result[i,5] = out$param
+         result[i,6] = out$param.SE
+      }
     }
 
-    return(sc.param)
+    return(result)
+}
+
+### helper functions
+
+
+# Richardson extrapolation approximation 
+# for numerical computation of curvature
+num.curv = function(x, fun) 
+{
+  macheps = .Machine$double.eps
+  h = max( 1e-4, macheps^(1/4)*abs(x) )
+
+  w = c(-1/12,4/3,-5/2,4/3,-1/12) 
+  xd = x + h*c(-2,-1,0,1,2)
+ 
+  return( sum(w*fun(xd))/h^2 )
+}
+
+
+
+### internal functions 
+
+pvt.fit.nullmodel = function(x, x0, statistic)
+{
+  N = length(x)
+
+  if (statistic=="pvalue")
+    x.cens = x[ x >= x0 ]
+  else
+    x.cens = x[ abs(x) <= x0 ] 
+
+  N0 = length(x.cens) 
+  if (N0 > N) stop("N must be larger or equal to the size of the censored sample!")
+  if (N0 < 10) 
+    warning(paste("Adjust threshold - censored sample has only size", 
+      length(x.cens), "!"), call.=FALSE)
+
+  if (N0 < 2) 
+    stop(paste("Adjust threshold - censored sample has only size", 
+      length(x.cens), "!"), call.=FALSE)
+
+
+  ##############
+
+  nm = get.nullmodel(statistic)
+
+  
+  # negative log-likelihood function (truncated density)
+  nlogL = function(pp) 
+  {
+    out = rep(0, length(pp))
+    for (i in 1:length(pp))
+    {
+      out[i] = length(x.cens)*(1-nm$get.pval(x0, pp[i]))-
+               sum(nm$f0(x.cens, pp[i], log=TRUE))
+    }
+    return(out)
+  } 
+
+  ##############
+  
+  # estimate parameters of null model
+  if (statistic!="pvalue")
+  {
+    start = iqr.fit(x.cens) # start value for scale parameter - this is an underestimate!
+    sup = nm$get.support()
+    opt.out = nlminb( start, nlogL, lower=sup[1], upper=sup[2] )
+    sc.param = opt.out$par[1]
+    sc.var = 1/num.curv(sc.param,nlogL) # inverse curvature of negative logL
+    if(sc.var < 0) 
+    {
+       sc.var = 0
+       warning("Variance of scale parameter set to zero due to numerical problems")
+    }
+    sc.SE = sqrt(sc.var)
+  }
+  else
+  {
+    sc.param = NULL # no scale parameter
+    sc.SE = NULL    
+  }
+
+  # ML estimate of eta0
+  m = 1-nm$get.pval(x0, sc.param)
+  th = N0/N
+  eta0 = min(1, th / m )
+  #eta0 = th / m 
+  eta0.SE = sqrt( th*(1-th)/(N*m*m) )
+
+  rm(x.cens)
+
+  return(
+    list(N0=N0,
+         eta0=eta0,              # proportion
+         eta0.SE=eta0.SE,        # corresponding standard error
+         param=sc.param,         # scale parameter
+         param.SE=sc.SE          # corresponding standard error
+        )
+  )
 }
 

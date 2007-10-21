@@ -1,4 +1,4 @@
-### pval.estimate.eta0.R  (2007-01-09)
+### pval.estimate.eta0.R  (2007-10-11)
 ###
 ###     Estimating the Proportion of Null p-Values
 ###
@@ -37,6 +37,9 @@
 #  adaptive:     Benjamini and Hochberg (2000) J. Behav. Educ. Statist.
 #  bootstrap:    Storey (2002) JRSSB
 #  smoother:     Storey and Tibshirani (2003) PNAS
+#  quantile:     similar to "smoother", with eta0 assumed to be quantile q (10%)
+
+
 
 #Output
 #=============================================================================
@@ -46,8 +49,8 @@
 
 
 pval.estimate.eta0 <- function(p,
-    method=c("smoother", "bootstrap", "conservative", "adaptive"),
-    lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE)
+    method=c("smoother", "bootstrap", "conservative", "adaptive", "quantile"),
+    lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE, q=0.1)
 {
     method <- match.arg(method)
             
@@ -74,7 +77,7 @@ pval.estimate.eta0 <- function(p,
 	eta0 <- m0/m      
     }
 
-    if(method == "bootstrap" || method == "smoother")
+    if(method == "bootstrap" || method == "smoother" || method == "quantile")
     {
       # for the remaining methods we a set of p-value thresholds
       if (length(lambda) < 4)
@@ -85,6 +88,12 @@ pval.estimate.eta0 <- function(p,
       {
         e0.vec[i] <- mean(p >= lambda[i])/(1-lambda[i])
       }
+    }
+
+    if(method == "quantile")
+    {
+      e0.vec <- pmax(0, pmin(1, e0.vec))
+      eta0 <- as.double(quantile( e0.vec, probs=c(q))) 
     }
            
     if(method == "bootstrap") # Storey (2002) JRSSB
@@ -104,7 +113,7 @@ pval.estimate.eta0 <- function(p,
       }
       idx <- which.min(mse)[1]
       lambda.min <- lambda[idx]
-      eta0 <- min(e0.vec[idx], 1)
+      eta0 <- max(0, min(e0.vec[idx], 1))
 
       if (diagnostic.plot)
       {
@@ -121,7 +130,7 @@ pval.estimate.eta0 <- function(p,
     if(method == "smoother") # Storey and Tibshirani (2003) PNAS
     {
       e0.spline <- smooth.spline(lambda, e0.vec, df=3)
-      eta0 <- min( predict(e0.spline, x=max(lambda))$y, 1)
+      eta0 <- max(0,min( predict(e0.spline, x=max(lambda))$y, 1))
       
       if (diagnostic.plot)
       {
@@ -152,5 +161,7 @@ pval.estimate.eta0 <- function(p,
       text(0.5, 4/6*maxy, info1, col=2)  
     }
      
+
+
     return(eta0) 
 }

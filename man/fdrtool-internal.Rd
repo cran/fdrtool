@@ -3,15 +3,20 @@
 \alias{pvt.isoMean}
 \alias{r2t}
 \alias{t2r}
-\alias{pvt.censored.fit1}
-\alias{pvt.censored.fit2}
-
-\alias{fdr.estimate.eta0}
 
 \alias{pvt.nullfunction}
 \alias{pvt.plotlabels}
 \alias{ecdf.pval}
-\alias{fdr.control}
+
+\alias{num.curv}
+
+\alias{approximate.fit}
+\alias{iqr.fit}
+
+\alias{get.nullmodel}
+\alias{pvt.fit.nullmodel}
+
+
 
 
 \title{Internal fdrtool Functions}

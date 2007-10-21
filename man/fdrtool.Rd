@@ -3,7 +3,8 @@
 \title{Estimate (Local) False Discovery Rates For Diverse Test Statistics}
 \usage{
 fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, pval.estimate.eta0.arg=NULL, use.locfdr=TRUE, \dots)
+  plot=TRUE, verbose=TRUE, cutoff.method=c("fndr", "pct0", "locfdr"),
+  pct0=0.75)
 }
 \description{
   \code{fdrtool} takes a vector of z-scores (or of correlations, p-values,
@@ -21,32 +22,37 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
   \item{plot}{plot a figure with estimated densities, distribution functions, 
              and (local) false discovery rates.}
   \item{verbose}{print out status messages.}
-  \item{censored.fit.arg}{list with arguments passed on to 
-                              \code{\link{censored.fit}}.}
-  \item{pval.estimate.eta0.arg}{list with arguments passed on to 
-                                 \code{\link{pval.estimate.eta0}}.}
-  \item{use.locfdr}{employ the locfdr package for estimation eta0 and 
-        scale parameter (only for "normal" and "correlation" statistic).}
-  \item{\dots}{parameters passed on to the locfdr function (e.g. df).}
+  \item{cutoff.method}{one of "fndr" (default), "pct0", "locfdr".}
+  \item{pct0}{fraction of data used for fitting null model - only if \code{cutoff.method}="pct0"}
 
 }
 \details{
   The algorithm implemented in this function proceeds as follows:
 
  \enumerate{
+   \item  A suitable cutoff point is determined.  If \code{cutoff.method}
+          is "fndr" then first an approximate null model is fitted and
+          subsequently a cutoff point is sought with false nondiscovery
+          rate as small as possible (see \code{\link{fndr.cutoff}}). 
+          If \code{cutoff.method} is "pct0"
+          then a specified quantile (default value: 0.75) of the data
+          is used as the cutoff point.  If \code{cutoff.method} equals
+          "locfdr" then the heuristic of the "locfdr" package (version 1-1.5)
+          is employed to find the cutoff (z-scores only).
    \item  The parameters of the null model are estimated from the 
-          data using \code{\link{censored.fit}}.
-   \item  Subsequently the corresponding p-values are computed.
-   \item  The proportion of null-p-values \code{eta0} is estimated using 
-          \code{\link{pval.estimate.eta0}}.
-   \item  A modified \code{\link{grenander}} algorithm is employed
+          data using \code{\link{censored.fit}}. This results
+          in estimates for scale parameters und and proportion
+          of null values (\code{eta0}). 
+   \item  Subsequently the corresponding p-values are computed, and
+          a modified \code{\link{grenander}} algorithm is employed
           to obtain the overall density and distribution function 
           (note that this respects the estimated \code{eta0}).
    \item  Finally, q-values and local fdr values are computed for each case.
   }
 
   The assumed null models all have (except for p-values) one free
-  scale parameter.  Note that the z-scores are assumed to have zero mean. 
+  scale parameter.  Note that the z-scores and the correlations
+  are assumed to have zero mean. 
 
 }
 \value{
@@ -88,6 +94,6 @@ z = c(z, runif(30, 5, 10)) # add some contamination
 fdr <- fdrtool(z)
 
 # you may change some parameters of the underlying functions
-fdr <- fdrtool(z, censored.fit.arg=list( pct0=0.9)) 
+fdr <- fdrtool(z, cutoff.method="pct0", pct0=0.9) 
 }
 \keyword{htest}

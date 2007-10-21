@@ -4,7 +4,7 @@
 \alias{fitted.monoreg}
 \alias{residuals.monoreg}
 
-\title{Monotone Regression: Isotonic Regression and Antitonic Regressio}
+\title{Monotone Regression: Isotonic Regression and Antitonic Regression}
 
 \usage{
 monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
@@ -22,7 +22,7 @@ monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
   \item{w}{data weights (default values: 1).}
     
  
-  \item{type}{fit a monontonely increasing ("isotonic") or 
+  \item{type}{fit a monotonely increasing ("isotonic") or 
   monotonely decreasing ("antitonic") function.}
 }
 
@@ -62,7 +62,7 @@ monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
   Korbinian Strimmer (\url{http://strimmerlab.org}).
   
   Part of this function is C code that has been ported from
-  R code orginally written by Kaspar Rufibach. 
+  R code originally written by Kaspar Rufibach. 
 }
 \seealso{\code{\link{isoreg}}.}
 

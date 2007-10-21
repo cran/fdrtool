@@ -1,4 +1,4 @@
-### fdrtool.R  (2007-06-01)
+### fdrtool.R  (2007-10-19)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
@@ -24,82 +24,84 @@
 
 
  
-fdrtool <- function(x, 
+fdrtool = function(x, 
   statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, censored.fit.arg=NULL, 
-  pval.estimate.eta0.arg=NULL, use.locfdr=TRUE, ...)
+  plot=TRUE, verbose=TRUE, cutoff.method=c("fndr", "pct0", "locfdr"),
+  pct0=0.75)
 {
-  statistic <- match.arg(statistic)
-  ax = abs(x) 
-
-  if (statistic=="pvalue") ax = 1-ax  # reverse p-val plot 
-
-  if (statistic=="pvalue" & max(ax) > 1)
-    stop("input p-values must all be in the range 0 to 1!")
-
-  if (use.locfdr==TRUE & (statistic=="normal" | statistic=="correlation"))
+  statistic = match.arg(statistic)
+  cutoff.method = match.arg(cutoff.method)
+  
+  if (statistic=="pvalue")
   {
-    require("locfdr")
-    
-    if(verbose) cat("Step 1... fit null distribution and estimate eta0\n")
-    if (statistic=="normal") z <- x
-    if (statistic=="correlation") z <- atanh(x)
-
-    locfdr.out = locfdr(z, plot=0, ...)
-    fitpar <- locfdr.out$fp0
-
-    eta0 <- fitpar[3, 3]
-    sigma <- fitpar[3,2]
-    if (statistic=="normal")
-    {   
-       cf.param <- sigma
-       attr(cf.param, "names") <- c("sd")
-    }
-
-    if (statistic=="correlation")
-    {
-       cf.param <- 1/(sigma*sigma) + 2
-       attr(cf.param, "names") <- c("kappa")
-    }
-    
-    if(verbose) cat("Step 2... compute p-values\n")   
-    nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
-    get.pval <- function(zeta) return( 1- nf$F0(zeta) )
-    pval = get.pval(ax)
-
+    if (max(x) > 1 & min(x) < 0) 
+      stop("input p-values must all be in the range 0 to 1!")
   }
-  else
-  {###
 
   
 #### step 1 ####
 
-  if(verbose) cat("Step 1... fit null distribution\n")
+  if(verbose) cat("Step 1... determine cutoff point\n")
 
-  # determine parameters of null distribution
-  if (statistic != "pvalue")
+  # determine cutoff point for censoring
+
+  if (cutoff.method=="pct0")
   {
-    cf.param <- do.call("censored.fit", c(list(x=x, statistic=statistic),
-                  censored.fit.arg ) ) 
+    # use specified quantile
+
+    if(statistic=="pvalue") x0 = quantile(x, probs=1-pct0)
+    else x0 = quantile(abs(x), probs=pct0)
   }
+  else if ( cutoff.method=="locfdr" & (statistic=="normal" | statistic=="correlation") )
+  {
+    # use same procedure as in locfdr R package (due to Brit Katzen-Turnbull)
+
+    if(statistic=="normal") z = x
+    if(statistic=="correlation") z = atanh(x)
+
+    iqr = as.double(diff(quantile(z, probs=c(.25, .75))))
+    sdhat = iqr/(2*qnorm(.75))
+    b = 3.55-.44*log(length(z), 10)
+    z0 = b*sdhat
+    
+    if(statistic=="normal") x0 = z0
+    if(statistic=="correlation") x0 = tanh(z0)
+  }
+  else
+  {
+    if(cutoff.method=="locfdr")
+    warning("cutoff.method=\"locfdr\" only available for normal and correlation statistic.")
+
+    # control false nondiscovery rate
+
+    x0 = fndr.cutoff(x, statistic)
+  }
+
+
 
 #### step 2 ####
 
-  if(verbose) cat("Step 2... compute p-values and estimate eta0\n")
+  if(verbose) cat("Step 2... estimate parameters of null distribution and eta0\n")
 
-  nf <- pvt.nullfunction(statistic=statistic, cf.param=cf.param)
-  get.pval <- function(zeta) return( 1- nf$F0(zeta) )
-  pval = get.pval(ax)
+  cf.out <- censored.fit(x=x, cutoff=x0, statistic=statistic)
+# cf.out looks as follows for p-values
+#     cutoff N0      eta0    eta0.var
+#[1,]   0.96 64 0.3730473 0.002141996
+# the other test statistics have two more colums containing the scale parameter
 
-  # determine eta0
-  eta0 <- do.call("pval.estimate.eta0", c(list(p=pval, diagnostic.plot=FALSE),
-             pval.estimate.eta0.arg ) ) 
- 
-  }###
-  
-#### step 3 ####
+  if (statistic=="pvalue")
+    scale.param = NULL
+  else
+    scale.param <- cf.out[1,5] # variance parameter
 
-  if(verbose) cat("Step 3... estimate empirical PDF/CDF of p-values\n")
+  eta0 = cf.out[1,3]
+
+#### step 2 ####
+
+  if(verbose) cat("Step 3... compute p-values and estimate empirical PDF/CDF\n")
+
+  nm = get.nullmodel(statistic)
+  pval = nm$get.pval(x, scale.param)
 
   # determine cumulative empirical distribution function (pvalues)
   ee <- ecdf.pval(pval, eta0=eta0)
@@ -123,7 +125,7 @@ fdrtool <- function(x,
 
 #### step 4 ####
 
-  if(verbose) cat("Step 4... compute q-values and local fdr for each case\n")
+  if(verbose) cat("Step 4... compute q-values and local fdr\n")
 
   qval <- Fdr.pval(pval) 
   lfdr <- fdr.pval(pval)
@@ -132,41 +134,59 @@ fdrtool <- function(x,
  
 #### return results ####
 
-  if (statistic=="pvalue") 
-    param = c(eta0)
-  else
-    param = c(eta0, cf.param)
-  if (statistic=="studentt") attr(param, "names") <- c("eta0", "df")
-  if (statistic=="normal") attr(param, "names") <- c("eta0", "sd")
-  if (statistic=="correlation") attr(param, "names") <- c("eta0", "kappa")
-  if (statistic=="pvalue") attr(param, "names") <- c("eta0")
-  
-  nm = list(pval=pval, qval=qval, lfdr=lfdr, 
-             statistic=statistic, param=param)
+
+  result = list(pval=pval, qval=qval, lfdr=lfdr, 
+             statistic=statistic, param=cf.out)
 
   if (plot)
   {
     if(verbose) cat("Step 5... prepare for plotting\n")
 
+    ##############
+    # zeta > 0 in the following
+     
+
+    
+ 
+    if(statistic=="pvalue")
+    {
+      f0 <- function(zeta) return( nm$f0(zeta, scale.param) ) 
+      F0 <- function(zeta) return( nm$F0(zeta, scale.param) )
+      get.pval <- function(zeta) return( nm$get.pval(1-zeta, scale.param) )
+      x0 = 1-x0
+    } 
+    else
+    {
+      f0 <- function(zeta) return( 2*nm$f0(zeta, scale.param)  ) 
+      F0 <- function(zeta) return( 2*nm$F0(zeta, scale.param)-1  )
+      get.pval <- function(zeta) return( nm$get.pval(zeta, scale.param) )
+    }
+
     fdr = function(zeta)  fdr.pval(get.pval(zeta)) 
     Fdr = function(zeta)  Fdr.pval(get.pval(zeta)) 
      
     F   = function(zeta)  1-eta0*get.pval(zeta)/Fdr(zeta) 
-    FA  = function(zeta)  (F(zeta)-eta0*nf$F0(zeta))/(1-eta0)		
+    FA  = function(zeta)  (F(zeta)-eta0*F0(zeta))/(1-eta0)		
 
-    f   = function(zeta)  eta0*(nf$f0(zeta))/fdr(zeta) 
-    fA  = function(zeta)  (f(zeta)-eta0*nf$f0(zeta))/(1-eta0)		
+    f   = function(zeta)  eta0*(f0(zeta))/fdr(zeta) 
+    fA  = function(zeta)  (f(zeta)-eta0*f0(zeta))/(1-eta0)		
 
+   
+    ##############
+
+    ax = abs(x) 
+    if (statistic=="pvalue") ax = 1-ax  # reverse p-val plot 
 
     xxx = seq(0, max(ax), length.out=200)
-    ll = pvt.plotlabels(statistic, cf.param, eta0)
+    
+    ll = pvt.plotlabels(statistic, scale.param, eta0)
 
     par(mfrow=c(3,1))
 
     hist(ax, freq=FALSE, bre=50,
       main=ll$main, xlab=ll$xlab, cex.main=1.8)
-    lines(xxx, eta0*nf$f0(xxx), col=2, lwd=2, lty=3 )
-    #lines(xxx, f(xxx), col=1, lwd=1 ) # show histogram instead
+    lines(xxx, eta0*f0(xxx), col=2, lwd=2, lty=3 )
+    #lines(xxx, f(xxx), col=1, lwd=1 ) # show histogram instead DEBUG
     lines(xxx, (1-eta0)*fA(xxx), col=4, lwd=2 )
     if (statistic=="pvalue") 
       pos1 = "topleft" else pos1="topright"
@@ -177,8 +197,11 @@ fdrtool <- function(x,
     plot(xxx, F(xxx), col=1, lwd=1, type="l", ylim=c(0,1),
       main="Density (first row) and Distribution Function (second row)",
       xlab=ll$xlab, ylab="CDF", cex.main=1.5)
-    lines(xxx, eta0*nf$F0(xxx), col=2, lwd=2, lty=3)
+    lines(xxx, eta0*F0(xxx), col=2, lwd=2, lty=3)
     lines(xxx, (1-eta0)*FA(xxx), col=4, lwd=2)
+    
+    # DEBUG show cutoff in green line
+    #lines(c(x0,x0),c(0,1), col=3)
 
     plot(xxx, Fdr(xxx), type="l", lwd=2, ylim=c(0,1),
       main="(Local) False Discovery Rate", ylab="Fdr and fdr",
@@ -190,20 +213,24 @@ fdrtool <- function(x,
       c("fdr (density-based)", "Fdr (tail area-based)"), 
       lwd=c(2,2), col=c(1,1), lty=c(1,3), bty="n", cex=1.5)
 
+    # DEBUG show cutoff in green line
+    #lines(c(x0,x0),c(0,1), col=3)
+
     par(mfrow=c(1,1))
 
+    rm(ax)
   }
 
   if(verbose) cat("\n")
 
-  return(nm)
+  return(result)
 }
 
 
 #####
 
 ## create labels for plots
-pvt.plotlabels <- function(statistic, cf.param, eta0)
+pvt.plotlabels <- function(statistic, scale.param, eta0)
 {
    if (statistic=="pvalue")
    {
@@ -213,7 +240,7 @@ pvt.plotlabels <- function(statistic, cf.param, eta0)
 
    if (statistic=="studentt")
    {
-     df = cf.param 
+     df = scale.param 
      main = paste("Type of Statistic: t-Score (df = ", round(df,3),
                        ", eta0 = ", round(eta0, 4), ")", sep="")
      xlab = "abs(t)"
@@ -221,7 +248,7 @@ pvt.plotlabels <- function(statistic, cf.param, eta0)
 
    if (statistic=="normal")
    {
-     sd = cf.param 
+     sd = scale.param 
      main = paste("Type of Statistic: z-Score  (sd = ", round(sd,3),
                        ", eta0 = ", round(eta0, 4), ")", sep="")
      xlab = "abs(z)"
@@ -229,7 +256,7 @@ pvt.plotlabels <- function(statistic, cf.param, eta0)
 
    if (statistic=="correlation")
    {
-     kappa =cf.param      
+     kappa =scale.param      
      main = paste("Type of Statistic: Correlation (kappa = ", round(kappa,1),
                        ", eta0 = ", round(eta0, 4), ")", sep="")
      xlab = "abs(r)"
@@ -238,44 +265,3 @@ pvt.plotlabels <- function(statistic, cf.param, eta0)
    return(list(main=main, xlab=xlab))
 }
 
-
-pvt.nullfunction <- function(statistic, cf.param)
-{
-   MEPS=1-1e-7
-
-   if (statistic!="pvalue") attr(cf.param, "names") <- NULL
-
-   if (statistic=="pvalue")
-   {
-     f0 = function(x) rep(1, length(x))
-     F0 = function(x) x
-     MEPS=1
-   }
-
-   if (statistic=="studentt")
-   {
-     df = cf.param       
-     f0 = function(x) 2*dt(x, df=df)
-     F0 = function(x) 2*pt(x, df=df)-1  
-   }
-
-   if (statistic=="normal")
-   {
-     sd = cf.param
-     f0 = function(x) dhalfnorm(x, theta=sd2theta(sd))
-     F0 = function(x) phalfnorm(x, theta=sd2theta(sd))
-   }
-
-   if (statistic=="correlation")
-   {
-     kappa =cf.param      
-     f0 = function(x) 2*dcor0(x, kappa=kappa)
-     F0 = function(x) 2*pcor0(x, kappa=kappa)-1 
-   }
-
-   checkf0 = function(x) pmax(f0(x),0)         # make sure f0 > 0
-                                               # make sure F0 is in [0,MEPS]
-   checkF0 = function(x) ifelse(x==Inf, 1, pmax(pmin(F0(x),MEPS),0) ) 
-
-   return(list(f0=checkf0, F0=checkF0))
- }

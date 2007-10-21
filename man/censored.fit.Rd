@@ -1,50 +1,45 @@
 \name{censored.fit}
 \alias{censored.fit}
+\alias{fndr.cutoff}
 
-\title{Fit Null Distribution To Censored Data}
+\title{Fit Null Distribution To Censored Data by Maximum Likelihood}
 
 \usage{
-censored.fit(x, statistic=c("normal", "correlation", "studentt"), 
-  pct0=0.75,  method=c("MM", "ML"), diagnostic.plot=FALSE)
+censored.fit(x, cutoff, statistic=c("normal", "correlation", "pvalue", "studentt"))
+fndr.cutoff(x, statistic=c("normal", "correlation", "pvalue", "studentt"))
 }
 
 \description{
-  \code{censored.fit} fits the scale parameter of a null distribution with mean zero
+  \code{censored.fit} fits  a null distribution 
   to censored data.
+
+  \code{fndr.cutoff} finds a suitable cutoff point based on the 
+   (approximate) false non-discovery rate (FNDR).
 }
 
 \arguments{
   \item{x}{vector of test statistics.}
+  \item{cutoff}{truncation point (this may a single value or a vector).}
   \item{statistic}{type of statistic - normal, correlation, or student t.}
-  \item{pct0}{fraction of data used to fit null distribution.  If multipe pct0 are
-              specified the fit is performed for each value, and the 
-              null distribution with smallest variance is chosen.}
-  \item{method}{procedure used to fit null distibution, either ML (maximum likelihood)
-         or MM (=median matching, the default).}
-  \item{diagnostic.plot}{for \code{length(pct0) > 1} plot the estimated 
-   variances in dependence of the pct0 parameter.}
 }
 \details{
-   For median matching, the median of the truncated 
-   half-normal distribution (or the equivalent for correlation and student t distribution) 
-   is matched to the median of the absolute values of the censored sample.
-   Note that if length(x) is small then median matching is less efficient than maximum likelihood.
 
-   For maximum likelihood the truncated density is fit to the censored    
-   sample.  As this can be quite time consuming for large data set (and as there
-   may be convergence problems) this is not the default method.
+   As null model truncated normal, truncated student t or a truncated
+   correlation density is assumed.  The truncation point is specified
+   by the cutoff parameter.  All data points whose absolute value
+   are large than the cutoff point are ignored when fitting the truncated
+   null model via maximum likelihood.  The total number of data points is
+   only used to estimate the fraction of null values eta0.
 }
 \value{
+  \code{censored.fit} returns a matrix whose rows contain the estimated parameters and corresponding errors
+  for each cutoff point. 
 
-  The estimate scale parameter of the null distribution. This depends
-  on the type of statistic:
-  \item{normal}{sd value.} 
-  \item{correlation}{kappa value (see \code{\link{dcor0}}).}
-  \item{studentt}{degrees of freedom (df).}
+  \code{fndr.cutoff} returns a tentative cutoff point.
 }
 
 
-\seealso{\code{\link{dcor0}}.}
+\seealso{\code{\link{fdrtool}}.}
 
 \examples{
 # load "fdrtool" library
@@ -54,7 +49,7 @@ library("fdrtool")
 sd.true = 2.232
 n = 5000
 z = rnorm(n, sd=sd.true)
-censored.fit(z, statistic="normal")
+censored.fit(z, c(2,3,5), statistic="normal")
 
 
 # simulate contaminated mixture of correlation distribution
@@ -63,7 +58,13 @@ u1 <- runif(200, min=-1, max=-0.7)
 u2 <- runif(200, min=0.7, max=1)
 rc <- c(r, u1, u2)
 
-censored.fit(r, statistic="correlation")
-censored.fit(rc, statistic="correlation")
+censored.fit(r, 0.7, statistic="correlation")
+censored.fit(rc, 0.7, statistic="correlation")
+
+# pvalue example
+data(pvalues)
+co = fndr.cutoff(pvalues, statistic="pvalue")
+co
+censored.fit(pvalues, cutoff=co, statistic="pvalue")
 }
 \keyword{htest}
