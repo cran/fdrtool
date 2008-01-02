@@ -3,7 +3,8 @@
 \title{Estimate (Local) False Discovery Rates For Diverse Test Statistics}
 \usage{
 fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, cutoff.method=c("fndr", "pct0", "locfdr"),
+  plot=TRUE, color.figure=TRUE, verbose=TRUE, 
+  cutoff.method=c("fndr", "pct0", "locfdr"),
   pct0=0.75)
 }
 \description{
@@ -17,13 +18,15 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
 
 \arguments{
   \item{x}{vector of the observed test statistics.}
-  \item{statistic}{one of ""normal" (default), "correlation", "pvalue", 
+  \item{statistic}{one of "normal" (default), "correlation", "pvalue", 
                    "studentt".  This species the null model.}
   \item{plot}{plot a figure with estimated densities, distribution functions, 
              and (local) false discovery rates.}
   \item{verbose}{print out status messages.}
   \item{cutoff.method}{one of "fndr" (default), "pct0", "locfdr".}
   \item{pct0}{fraction of data used for fitting null model - only if \code{cutoff.method}="pct0"}
+  \item{color.figure}{determines whether a color figure or a black and white
+        figure is produced (defaults to "TRUE", i.e. to color figure).}
 
 }
 \details{
@@ -37,8 +40,8 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
           If \code{cutoff.method} is "pct0"
           then a specified quantile (default value: 0.75) of the data
           is used as the cutoff point.  If \code{cutoff.method} equals
-          "locfdr" then the heuristic of the "locfdr" package (version 1-1.5)
-          is employed to find the cutoff (z-scores only).
+          "locfdr" then the heuristic of the "locfdr" package (version 1.1-6)
+          is employed to find the cutoff (z-scores and correlations only).
    \item  The parameters of the null model are estimated from the 
           data using \code{\link{censored.fit}}. This results
           in estimates for scale parameters und and proportion
@@ -80,9 +83,12 @@ data(pvalues)
 # estimate fdr and Fdr from p-values
 
 data(pvalues)
-fdr <- fdrtool(pvalues, statistic="pvalue")
+fdr = fdrtool(pvalues, statistic="pvalue")
 fdr$qval # estimated Fdr values 
 fdr$lfdr # estimated local fdr 
+
+# the same but with black and white figure  
+fdr = fdrtool(pvalues, statistic="pvalue", color.figure=FALSE)
 
 
 # estimate fdr and Fdr from z-scores
@@ -91,9 +97,9 @@ sd.true = 2.232
 n = 500
 z = rnorm(n, sd=sd.true)
 z = c(z, runif(30, 5, 10)) # add some contamination
-fdr <- fdrtool(z)
+fdr = fdrtool(z)
 
 # you may change some parameters of the underlying functions
-fdr <- fdrtool(z, cutoff.method="pct0", pct0=0.9) 
+fdr = fdrtool(z, cutoff.method="pct0", pct0=0.9) 
 }
 \keyword{htest}

@@ -2,6 +2,13 @@
               Release History of "fdrtool" Package
             ========================================
 
+                CHANGES IN fdrtool VERSION 1.2.1
+
+- option "color.figure" added, so that both color and b&w figures may be output.
+- a more sensible error message is now produced when the argument supplying the
+  test statistics is not a vector.
+- for the option cutoff.method=="locfdr" in fdrtool() the corresponding algorithm 
+  was updated to match that of locfdr version 1.1-6.
 
 
                 CHANGES IN fdrtool VERSION 1.2.0

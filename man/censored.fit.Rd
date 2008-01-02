@@ -53,10 +53,10 @@ censored.fit(z, c(2,3,5), statistic="normal")
 
 
 # simulate contaminated mixture of correlation distribution
-r <- rcor0(700, kappa=10)
-u1 <- runif(200, min=-1, max=-0.7)
-u2 <- runif(200, min=0.7, max=1)
-rc <- c(r, u1, u2)
+r = rcor0(700, kappa=10)
+u1 = runif(200, min=-1, max=-0.7)
+u2 = runif(200, min=0.7, max=1)
+rc = c(r, u1, u2)
 
 censored.fit(r, 0.7, statistic="correlation")
 censored.fit(rc, 0.7, statistic="correlation")

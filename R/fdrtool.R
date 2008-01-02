@@ -1,13 +1,13 @@
-### fdrtool.R  (2007-10-19)
+### fdrtool.R  (2008-01-02)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
 ###
-### Copyright 2007 Korbinian Strimmer
+### Copyright 2007-08 Korbinian Strimmer
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
-### License, version 2, or at your option, any later version,
+### License, version 3, or at your option, any later version,
 ### incorporated herein by reference.
 ### 
 ### This program is distributed in the hope that it will be
@@ -26,12 +26,16 @@
  
 fdrtool = function(x, 
   statistic=c("normal", "correlation", "pvalue", "studentt"),
-  plot=TRUE, verbose=TRUE, cutoff.method=c("fndr", "pct0", "locfdr"),
+  plot=TRUE, color.figure=TRUE, verbose=TRUE, 
+  cutoff.method=c("fndr", "pct0", "locfdr"),
   pct0=0.75)
 {
   statistic = match.arg(statistic)
   cutoff.method = match.arg(cutoff.method)
   
+  if ( is.vector(x) == FALSE )
+  	stop("input test statistics must be given as a vector!")
+
   if (statistic=="pvalue")
   {
     if (max(x) > 1 & min(x) < 0) 
@@ -61,7 +65,9 @@ fdrtool = function(x,
 
     iqr = as.double(diff(quantile(z, probs=c(.25, .75))))
     sdhat = iqr/(2*qnorm(.75))
-    b = 3.55-.44*log(length(z), 10)
+    N = length(z)
+    # b = 3.55-.44*log(N, 10)                               # locfdr 1.1-3
+    b = ifelse(N > 500000, 1,  4.3 * exp(-0.26*log(N,10)) ) # locfdr 1.1-6
     z0 = b*sdhat
     
     if(statistic=="normal") x0 = z0
@@ -177,41 +183,45 @@ fdrtool = function(x,
     ax = abs(x) 
     if (statistic=="pvalue") ax = 1-ax  # reverse p-val plot 
 
-    xxx = seq(0, max(ax), length.out=200)
+    xxx = seq(0, max(ax), length.out=500)
     
     ll = pvt.plotlabels(statistic, scale.param, eta0)
 
     par(mfrow=c(3,1))
 
+    if (color.figure)
+      cols = c(2,4) # colors for f0,F0 and fA,FA
+    else
+      cols = c(1,1)
+
     hist(ax, freq=FALSE, bre=50,
       main=ll$main, xlab=ll$xlab, cex.main=1.8)
-    lines(xxx, eta0*f0(xxx), col=2, lwd=2, lty=3 )
-    #lines(xxx, f(xxx), col=1, lwd=1 ) # show histogram instead DEBUG
-    lines(xxx, (1-eta0)*fA(xxx), col=4, lwd=2 )
+    lines(xxx, eta0*f0(xxx), col=cols[1], lwd=2, lty=3 )
+    lines(xxx, (1-eta0)*fA(xxx), col=cols[2], lwd=2 )
     if (statistic=="pvalue") 
       pos1 = "topleft" else pos1="topright"
     legend(pos1, 
       c("Mixture", "Null Component", "Alternative Component"), 
-      lwd=c(1, 2, 2), col=c(1, 2, 4), lty=c(1,3,1), bty="n", cex=1.5)
+      lwd=c(1, 2, 2), col=c(1,cols), lty=c(1,3,1), bty="n", cex=1.5)
  
-    plot(xxx, F(xxx), col=1, lwd=1, type="l", ylim=c(0,1),
+    plot(xxx, F(xxx), lwd=1, type="l", ylim=c(0,1),
       main="Density (first row) and Distribution Function (second row)",
       xlab=ll$xlab, ylab="CDF", cex.main=1.5)
-    lines(xxx, eta0*F0(xxx), col=2, lwd=2, lty=3)
-    lines(xxx, (1-eta0)*FA(xxx), col=4, lwd=2)
+    lines(xxx, eta0*F0(xxx), col=cols[1], lwd=2, lty=3)
+    lines(xxx, (1-eta0)*FA(xxx), col=cols[2], lwd=2)
     
     # DEBUG show cutoff in green line
     #lines(c(x0,x0),c(0,1), col=3)
 
     plot(xxx, Fdr(xxx), type="l", lwd=2, ylim=c(0,1),
       main="(Local) False Discovery Rate", ylab="Fdr and fdr",
-      xlab=ll$xlab, col=1, lty=3, cex.main=1.5)
-    lines(xxx, fdr(xxx), lwd=2, col=1)
+      xlab=ll$xlab, lty=3, cex.main=1.5)
+    lines(xxx, fdr(xxx), lwd=2)
     if (eta0 > 0.98) 
       pos2 = "bottomleft" else pos2="topright"
     legend(pos2, 
       c("fdr (density-based)", "Fdr (tail area-based)"), 
-      lwd=c(2,2), col=c(1,1), lty=c(1,3), bty="n", cex=1.5)
+      lwd=c(2,2), lty=c(1,3), bty="n", cex=1.5)
 
     # DEBUG show cutoff in green line
     #lines(c(x0,x0),c(0,1), col=3)
