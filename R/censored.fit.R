@@ -1,8 +1,8 @@
-### censored.fit.R  (2007-10-13)
+### censored.fit.R  (2008-02-25)
 ###
 ###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
-### Copyright 2006-07 Korbinian Strimmer 
+### Copyright 2006-08 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -127,7 +127,7 @@ pvt.fit.nullmodel = function(x, x0, statistic)
     out = rep(0, length(pp))
     for (i in 1:length(pp))
     {
-      out[i] = length(x.cens)*(1-nm$get.pval(x0, pp[i]))-
+      out[i] = length(x.cens)*log(1-nm$get.pval(x0, pp[i]))-
                sum(nm$f0(x.cens, pp[i], log=TRUE))
     }
     return(out)
@@ -138,10 +138,16 @@ pvt.fit.nullmodel = function(x, x0, statistic)
   # estimate parameters of null model
   if (statistic!="pvalue")
   {
-    start = iqr.fit(x.cens) # start value for scale parameter - this is an underestimate!
-    sup = nm$get.support()
-    opt.out = nlminb( start, nlogL, lower=sup[1], upper=sup[2] )
-    sc.param = opt.out$par[1]
+    start = iqr.fit(x.cens) # start value for scale parameter
+    
+    #sup = nm$get.support()
+    #opt.out = nlminb( start, nlogL, lower=sup[1], upper=sup[2] )
+    #sc.param = opt.out$par[1]
+   
+    lo = start/1000
+    up = start*1000
+    sc.param = optimize(nlogL, lower=lo, upper=up)$minimum
+
     sc.var = 1/num.curv(sc.param,nlogL) # inverse curvature of negative logL
     if(sc.var < 0) 
     {

@@ -2,6 +2,12 @@
               Release History of "fdrtool" Package
             ========================================
 
+
+                CHANGES IN fdrtool VERSION 1.2.2
+
+- a bug was fixed in the optimization part of the censored.fit() function.
+
+
                 CHANGES IN fdrtool VERSION 1.2.1
 
 - option "color.figure" added, so that both color and b&w figures may be output.
