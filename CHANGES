@@ -3,6 +3,13 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.3
+
+- the previous bug fix (v.1.2.2) unfortunately broke the optimization 
+  of FDR for correlations which necessitated a second bug fix.
+- small changes to the man pages.
+
+
                 CHANGES IN fdrtool VERSION 1.2.2
 
 - a bug was fixed in the optimization part of the censored.fit() function.

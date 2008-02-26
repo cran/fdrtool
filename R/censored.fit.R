@@ -1,4 +1,4 @@
-### censored.fit.R  (2008-02-25)
+### censored.fit.R  (2008-02-26)
 ###
 ###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
@@ -138,7 +138,7 @@ pvt.fit.nullmodel = function(x, x0, statistic)
   # estimate parameters of null model
   if (statistic!="pvalue")
   {
-    start = iqr.fit(x.cens) # start value for scale parameter
+    start = iqr.fit(x.cens, statistic) # start value for scale parameter
     
     #sup = nm$get.support()
     #opt.out = nlminb( start, nlogL, lower=sup[1], upper=sup[2] )
