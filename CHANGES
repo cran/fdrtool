@@ -2,6 +2,12 @@
               Release History of "fdrtool" Package
             ========================================
 
+                CHANGES IN fdrtool VERSION 1.2.4
+
+- various warning messages were introduced to indicate potential problems
+  with FDR computations if there are too few input test statistics 
+  (fdrtool() and related functions)
+
 
                 CHANGES IN fdrtool VERSION 1.2.3
 

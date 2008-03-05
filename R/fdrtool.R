@@ -1,4 +1,4 @@
-### fdrtool.R  (2008-01-02)
+### fdrtool.R  (2008-03-05)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
@@ -35,7 +35,8 @@ fdrtool = function(x,
   
   if ( is.vector(x) == FALSE )
   	stop("input test statistics must be given as a vector!")
-
+ 
+  if ( length(x) < 200 ) warning("There may be too few input test statistics for reliable FDR calculations!")
   if (statistic=="pvalue")
   {
     if (max(x) > 1 & min(x) < 0) 

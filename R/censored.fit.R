@@ -1,4 +1,4 @@
-### censored.fit.R  (2008-02-26)
+### censored.fit.R  (2008-03-05)
 ###
 ###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
@@ -108,12 +108,12 @@ pvt.fit.nullmodel = function(x, x0, statistic)
   N0 = length(x.cens) 
   if (N0 > N) stop("N must be larger or equal to the size of the censored sample!")
   if (N0 < 10) 
-    warning(paste("Adjust threshold - censored sample has only size", 
+    warning(paste("Censored sample for null model estimation has only size", 
       length(x.cens), "!"), call.=FALSE)
 
-  if (N0 < 2) 
-    stop(paste("Adjust threshold - censored sample has only size", 
-      length(x.cens), "!"), call.=FALSE)
+  #if (N0 < 2) 
+  #  stop(paste("Adjust cutoff point - censored sample more null model has only size", 
+  #    length(x.cens), "!"), call.=FALSE)
 
 
   ##############

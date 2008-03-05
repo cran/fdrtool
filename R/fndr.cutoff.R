@@ -1,8 +1,8 @@
-### fndr.cutoff.R  (2007-10-19)
+### fndr.cutoff.R  (2008-03-05)
 ###
 ###     Find Approximate Cutoff Point by an FNDR Criterion
 ###
-### Copyright 2007 Korbinian Strimmer 
+### Copyright 2007-08 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -42,8 +42,17 @@ fndr.cutoff <- function(x, statistic=c("normal", "correlation", "pvalue", "stude
   fndrfunc = function(x)
   {
     F.x = sum(ax < x)/length(ax)
-    FNDR.x = (F.x-e0.guess*F0(x)) / F.x
-    return(max(0,  FNDR.x ))
+    
+    if (F.x == 0)
+    { 
+      FNDR.x = 0
+    }
+    else
+    {
+      FNDR.x = max(0, (F.x-e0.guess*F0(x)) / F.x)
+    }
+
+    return(FNDR.x)
   }
 
 
