@@ -1,4 +1,4 @@
-### censored.fit.R  (2008-03-05)
+### censored.fit.R  (2008-07-04)
 ###
 ###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
@@ -144,11 +144,18 @@ pvt.fit.nullmodel = function(x, x0, statistic)
     #opt.out = nlminb( start, nlogL, lower=sup[1], upper=sup[2] )
     #sc.param = opt.out$par[1]
    
-    lo = start/1000
-    up = start*1000
+    sup = nm$get.support()
+    lo = max( start/1000, sup[1])
+    up = min( start*1000, sup[2])
     sc.param = optimize(nlogL, lower=lo, upper=up)$minimum
 
     sc.var = 1/num.curv(sc.param,nlogL) # inverse curvature of negative logL
+    
+    if(is.na(sc.var)) 
+    {
+       sc.var = 0
+       warning("Variance of scale parameter set to zero due to numerical problems")
+    }
     if(sc.var < 0) 
     {
        sc.var = 0

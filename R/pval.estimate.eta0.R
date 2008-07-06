@@ -117,7 +117,7 @@ pval.estimate.eta0 <- function(p,
 
       if (diagnostic.plot)
       {
-        get(getOption("device"))() # open new plot window
+        dev.new() # open new plot window
         par(mfrow=c(2,1))
         plot(lambda, e0.vec, ylab="eta0")
         points( lambda.min, eta0, pch=20, col=2 )
@@ -134,7 +134,7 @@ pval.estimate.eta0 <- function(p,
       
       if (diagnostic.plot)
       {
-        get(getOption("device"))() # open new plot window
+        dev.new() # open new plot window
         plot(lambda, e0.vec, main="Smoothing Curve Employed For Estimating eta0", 
           xlab="lambda", ylab="eta0")
         lines( e0.spline )
@@ -145,7 +145,7 @@ pval.estimate.eta0 <- function(p,
        
     if (diagnostic.plot)
     {
-      get(getOption("device"))() # open new plot window
+      dev.new() # open new plot window
   
       info0 = paste("method =", method)
       info1 = paste("eta0 =", round(eta0, 4))

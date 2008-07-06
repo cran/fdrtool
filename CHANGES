@@ -2,6 +2,16 @@
               Release History of "fdrtool" Package
             ========================================
 
+                CHANGES IN fdrtool VERSION 1.2.5
+
+- a small bug in censored.fit() was fixed that produced NaNs
+  when null model did not fit the data well (reported by Jana Sillmann)
+- obsolete method get(getOption("device"))() replaced by dev.new()
+- R >= 2.7.0 is now required
+- small updates in the documentation
+
+
+
                 CHANGES IN fdrtool VERSION 1.2.4
 
 - various warning messages were introduced to indicate potential problems

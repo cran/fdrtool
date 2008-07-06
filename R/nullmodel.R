@@ -1,8 +1,8 @@
-### nullmodel.R  (2007-10-13)
+### nullmodel.R  (2008-07-04)
 ###
 ###     Details on the FDR Null Model
 ###
-### Copyright 2007 Korbinian Strimmer 
+### Copyright 2007-2008 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -108,7 +108,7 @@ get.nullmodel = function(
     }
 
     # parameter support
-    get.support = function() return( c(2,1e9) )
+    get.support = function() return( c(3,1e9) )
   }
 
   ###### t scores ######

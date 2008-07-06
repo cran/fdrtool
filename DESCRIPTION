@@ -1,10 +1,10 @@
 Package: fdrtool
-Version: 1.2.4
-Date: 2008-03-05
+Version: 1.2.5
+Date: 2008-07-06
 Title: Estimation and Control of (Local) False Discovery Rates
 Author: Korbinian Strimmer.
 Maintainer: Korbinian Strimmer <strimmer@uni-leipzig.de>
-Depends: R (>= 2.2.1)
+Depends: R (>= 2.7.0)
 Suggests: 
 Description: This package allows to estimate both tail area-based false 
    discovery rates (Fdr) as well as local false discovery rates (fdr) for a 
@@ -17,4 +17,4 @@ Description: This package allows to estimate both tail area-based false
    and for the half-normal and correlation distributions.
 License: GPL (>= 3)
 URL: http://strimmerlab.org/software/fdrtool/
-Packaged: Wed Mar  5 13:40:25 2008; strimmer
+Packaged: Sun Jul  6 14:06:14 2008; strimmer

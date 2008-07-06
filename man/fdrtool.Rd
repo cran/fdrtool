@@ -75,7 +75,8 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
 \references{
 
   Strimmer, K. (2008).   A unified approach to false discovery 
-   rate estimation.  Preprint available from \url{http://strimmerlab.org}.
+   rate estimation. BMC Bioinformatics in press.
+   Preprint available from \url{http://strimmerlab.org}.
 }
 
 \seealso{\code{\link{pval.estimate.eta0}}, \code{\link{censored.fit}}.}
