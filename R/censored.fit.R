@@ -1,4 +1,4 @@
-### censored.fit.R  (2008-07-04)
+### censored.fit.R  (2009-11-19)
 ###
 ###     Fit Null Distribution To Censored Data by Maximum Likelihood
 ###
@@ -43,12 +43,12 @@ censored.fit = function(x, cutoff,
     if (statistic=="pvalue")
     {
       result = matrix(nrow=length(cutoff), ncol=4)
-      colnames(result)= c("cutoff", "N0", "eta0", "eta0.SE")
+      colnames(result)= c("cutoff", "N.cens", "eta0", "eta0.SE")
     }
     else
     {
       result = matrix(nrow=length(cutoff), ncol=6)
-      colnames(result)= c("cutoff", "N0", "eta0", "eta0.SE", "sd", "sd.SE")
+      colnames(result)= c("cutoff", "N.cens", "eta0", "eta0.SE", "sd", "sd.SE")
     }
     if (statistic=="correlation") colnames(result)[5] = "kappa"
     if (statistic=="studentt") colnames(result)[5] = "df"
@@ -62,7 +62,7 @@ censored.fit = function(x, cutoff,
       result[i,1] = x0
 
       out = pvt.fit.nullmodel(x, x0, statistic=statistic)
-      result[i,2] = out$N0
+      result[i,2] = out$N.cens
       result[i,3] = out$eta0
       result[i,4] = out$eta0.SE
 
@@ -105,13 +105,13 @@ pvt.fit.nullmodel = function(x, x0, statistic)
   else
     x.cens = x[ abs(x) <= x0 ] 
 
-  N0 = length(x.cens) 
-  if (N0 > N) stop("N must be larger or equal to the size of the censored sample!")
-  if (N0 < 10) 
+  N.cens = length(x.cens) 
+  if (N.cens > N) stop("N must be larger or equal to the size of the censored sample!")
+  if (N.cens < 10) 
     warning(paste("Censored sample for null model estimation has only size", 
       length(x.cens), "!"), call.=FALSE)
 
-  #if (N0 < 2) 
+  #if (N.cens < 2) 
   #  stop(paste("Adjust cutoff point - censored sample more null model has only size", 
   #    length(x.cens), "!"), call.=FALSE)
 
@@ -171,7 +171,7 @@ pvt.fit.nullmodel = function(x, x0, statistic)
 
   # ML estimate of eta0
   m = 1-nm$get.pval(x0, sc.param)
-  th = N0/N
+  th = N.cens/N
   eta0 = min(1, th / m )
   #eta0 = th / m 
   eta0.SE = sqrt( th*(1-th)/(N*m*m) )
@@ -179,7 +179,7 @@ pvt.fit.nullmodel = function(x, x0, statistic)
   rm(x.cens)
 
   return(
-    list(N0=N0,
+    list(N.cens=N.cens,
          eta0=eta0,              # proportion
          eta0.SE=eta0.SE,        # corresponding standard error
          param=sc.param,         # scale parameter

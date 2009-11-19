@@ -1,8 +1,8 @@
-### nullmodel.R  (2008-07-04)
+### nullmodel.R  (2009-11-19)
 ###
 ###     Details on the FDR Null Model
 ###
-### Copyright 2007-2008 Korbinian Strimmer 
+### Copyright 2007-2009 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -156,9 +156,9 @@ get.nullmodel = function(
       ax = abs(x)
 
       # return pval=0 only if abs(x)=Inf
-      return( ifelse(ax==Inf, 1, 
+      return( ifelse(ax==Inf, 0, 
                 pmax(.Machine$double.eps, 
-                  2-2*F0(abs(x), param))) )   
+                  2-2*F0(ax, param))) )   
     }
   }
 

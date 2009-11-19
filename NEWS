@@ -2,6 +2,15 @@
               Release History of "fdrtool" Package
             ========================================
 
+                CHANGES IN fdrtool VERSION 1.2.6
+
+- a small bug was fixed in get.nullmodel()$get.pval() so that the 
+  argument Inf returns p-value 0
+- in the output of censored.fit() the parameter "N0" was renamed to
+  "N.cens" to avoid confusion with N0=eta0*N  (note that N.cens is 
+  the number of data points retained for estimation)
+- reference to papers updated.
+
                 CHANGES IN fdrtool VERSION 1.2.5
 
 - a small bug in censored.fit() was fixed that produced NaNs
