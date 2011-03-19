@@ -1,6 +1,6 @@
 Package: fdrtool
-Version: 1.2.6
-Date: 2009-11-19
+Version: 1.2.7
+Date: 2011-03-19
 Title: Estimation and Control of (Local) False Discovery Rates
 Author: Korbinian Strimmer.
 Maintainer: Korbinian Strimmer <strimmer@uni-leipzig.de>
@@ -20,6 +20,6 @@ Description: This package allows to estimate both tail area-based false
         distributions.
 License: GPL (>= 3)
 URL: http://strimmerlab.org/software/fdrtool/
-Packaged: Thu Nov 19 22:21:42 2009; strimmer
+Packaged: Sat Mar 19 01:28:04 2011; strimmer
 Repository: CRAN
-Date/Publication: 2009-11-20 07:53:23
+Date/Publication: 2011-03-19 06:20:20

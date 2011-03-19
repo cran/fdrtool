@@ -1,10 +1,10 @@
-### gcmlcm.R  (2006-12-29)
+### gcmlcm.R  (2011-03-19)
 ###
 ###
 ###     Greatest Convex Minorant (GCM) and Least Concave Majorant (LCM) 
 ###
 ###
-### Copyright 2006 Korbinian Strimmer 
+### Copyright 2006-2011 Korbinian Strimmer 
 ###
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
@@ -44,6 +44,10 @@ gcmlcm = function(x, y, type=c("gcm", "lcm"))
   dy = diff(y)
 
   rawslope = dy/dx
+
+  # make sure there are no Inf in rawslope
+  rawslope[rawslope == Inf] <- .Machine$double.xmax
+  rawslope[rawslope == -Inf] <- -.Machine$double.xmax
 
   if (type == "gcm") slope <- pvt.isoMean(rawslope, dx)
   if (type == "lcm") slope <- -pvt.isoMean(-rawslope, dx)

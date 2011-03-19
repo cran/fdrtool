@@ -2,6 +2,13 @@
               Release History of "fdrtool" Package
             ========================================
 
+
+                CHANGES IN fdrtool VERSION 1.2.7
+
+- small change in gcmlcm() to make sure that the raw slope never equals
+  Inf (to avoid numeric problems with very small p-values)
+
+
                 CHANGES IN fdrtool VERSION 1.2.6
 
 - a small bug was fixed in get.nullmodel()$get.pval() so that the 
@@ -11,6 +18,7 @@
   the number of data points retained for estimation)
 - reference to papers updated.
 
+
                 CHANGES IN fdrtool VERSION 1.2.5
 
 - a small bug in censored.fit() was fixed that produced NaNs
@@ -18,7 +26,6 @@
 - obsolete method get(getOption("device"))() replaced by dev.new()
 - R >= 2.7.0 is now required
 - small updates in the documentation
-
 
 
                 CHANGES IN fdrtool VERSION 1.2.4
@@ -90,7 +97,6 @@ has been changed.  See manual for details.  Some specific changes include:
 
                 CHANGES IN fdrtool VERSION 1.1.1
 
-
 - the default behaviour of censored.fit() has been changed
   such that for multiple pct0 (i.e. length(pct0) > 1) the scale 
   parameter is estimated for each element of pct0, subsequently 
@@ -100,7 +106,6 @@ has been changed.  See manual for details.  Some specific changes include:
 - new "diagnostic.plot" option in censored.fit()
 - option to rely on locfdr >= 1.1-4 for fitting null distribution
   of correlation and normal scores
-
 
 
 		CHANGES IN fdrtool VERSION 1.1.0
@@ -128,9 +133,7 @@ Other:
 - fdrtool now requires R 2.2.1
 
 
-
 		CHANGES IN fdrtool VERSION 1.0.0
-
 
 This is the first standalone release (9 August 2006).
 Previously, the functions available in this package were part of
