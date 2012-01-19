@@ -3,6 +3,13 @@
             ========================================
 
 
+
+                CHANGES IN fdrtool VERSION 1.2.8
+
+- NAMESPACE file added
+- useDynLib() instead of .First.lib() to load compiled C code
+
+
                 CHANGES IN fdrtool VERSION 1.2.7
 
 - small change in gcmlcm() to make sure that the raw slope never equals
