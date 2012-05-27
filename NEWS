@@ -3,6 +3,10 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.9
+
+- bug fix for computation of local FDR for separated null and alternative
+
 
                 CHANGES IN fdrtool VERSION 1.2.8
 

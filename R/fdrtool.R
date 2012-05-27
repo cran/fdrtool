@@ -126,7 +126,13 @@ fdrtool = function(x,
            yleft=0, yright=g.pval$F.knots[length(g.pval$F.knots)])
   F0.pval = function(x) return( ifelse(x > 1, 1, ifelse(x < 0, 0, x )) )
 
-  fdr.pval = function(p) pmin( eta0   / f.pval(p), 1) # eta0*f0/ f
+  #fdr.pval = function(p) pmin( eta0   / f.pval(p), 1) # eta0*f0/ f
+  fdr.pval = function(p)
+  {
+    p[ p == .Machine$double.eps ] = 0
+    pmin( eta0   / f.pval(p), 1) # eta0*f0/ f
+  }
+
   Fdr.pval = function(p) pmin( eta0*p / F.pval(p), 1) # eta0*F0/ F
   
 
