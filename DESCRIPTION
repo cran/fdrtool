@@ -1,8 +1,8 @@
 Package: fdrtool
-Version: 1.2.9
-Date: 2012-05-27
-Title: Estimation and Control of (Local) False Discovery Rates
-Author: Korbinian Strimmer.
+Version: 1.2.10
+Date: 2012-07-25
+Title: Estimation of (Local) False Discovery Rates and Higher Criticism
+Author: Bernd Klaus and Korbinian Strimmer.
 Maintainer: Korbinian Strimmer <strimmer@uni-leipzig.de>
 Depends: R (>= 2.10.0)
 Suggests:
@@ -16,10 +16,11 @@ Description: This package allows to estimate both tail area-based false
         (Grenander estimator), for monotone regression (isotonic
         regression and antitonic regression with weights), for
         computing the greatest convex minorant (GCM) and the least
-        concave majorant (LCM), and for the half-normal and correlation
-        distributions.
+        concave majorant (LCM), for the half-normal and correlation
+        distributions, and for computing empirical higher criticism
+        (HC) scores and the corresponding decision threshold.
 License: GPL (>= 3)
 URL: http://strimmerlab.org/software/fdrtool/
-Packaged: 2012-05-27 16:44:13 UTC; strimmer
+Packaged: 2012-07-25 15:05:40 UTC; strimmer
 Repository: CRAN
-Date/Publication: 2012-05-27 16:56:07
+Date/Publication: 2012-07-25 15:17:28

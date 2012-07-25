@@ -3,6 +3,14 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.10
+
+- added two new functions for Higher Criticism (HC):  hc.score()
+  computes HC scores from p-values and hc.thresh() determines the HC
+  threshold for signal identification
+- the range of p-values (0..1) is now checked
+
+
                 CHANGES IN fdrtool VERSION 1.2.9
 
 - bug fix for computation of local FDR for separated null and alternative

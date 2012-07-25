@@ -1,9 +1,9 @@
-### fdrtool.R  (2008-03-05)
+### fdrtool.R  (2012-07-25)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
 ###
-### Copyright 2007-08 Korbinian Strimmer
+### Copyright 2007-12 Korbinian Strimmer
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
@@ -39,7 +39,7 @@ fdrtool = function(x,
   if ( length(x) < 200 ) warning("There may be too few input test statistics for reliable FDR calculations!")
   if (statistic=="pvalue")
   {
-    if (max(x) > 1 & min(x) < 0) 
+    if (max(x) > 1 | min(x) < 0) 
       stop("input p-values must all be in the range 0 to 1!")
   }
 
