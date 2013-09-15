@@ -42,9 +42,9 @@ hc.thresh(pval, alpha0=1, plot=TRUE)
 Donoho, D. and J. Jin. (2008). Higher criticism thresholding: optimal feature selection
 when useful features are rare and weak. Proc. Natl. Acad. Sci. USA 105:14790-15795.
 
-Klaus, B., and K. Strimmer (2012). Signal identification for rare and
+Klaus, B., and K. Strimmer (2013). Signal identification for rare and
 weak features: higher criticism or false discovery rates?
-Biostatistics in press.  Available from \url{http://arxiv.org/abs/1112.2615}.
+Biostatistics 14: 129-143.  Preprint available from \url{http://arxiv.org/abs/1112.2615}.
 }
 
 \seealso{\code{\link{fdrtool}}.}

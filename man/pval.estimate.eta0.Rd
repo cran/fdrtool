@@ -2,8 +2,9 @@
 \alias{pval.estimate.eta0}
 \title{Estimate the Proportion of Null p-Values}
 \usage{
-pval.estimate.eta0(p, method=c("smoother", "bootstrap", "conservative", "adaptive", "quantile"),
-    lambda=seq(0,0.9,0.05), diagnostic.plot=TRUE, q=0.1)
+pval.estimate.eta0(p, method=c("smoother", "bootstrap", "conservative",
+   "adaptive", "quantile"), lambda=seq(0,0.9,0.05), 
+   diagnostic.plot=TRUE, q=0.1)
 }
 \description{
   \code{pval.estimate.eta0} estimates the proportion eta0 of null p-values in a given

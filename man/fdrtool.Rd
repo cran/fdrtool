@@ -2,7 +2,7 @@
 \alias{fdrtool}
 \title{Estimate (Local) False Discovery Rates For Diverse Test Statistics}
 \usage{
-fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
+fdrtool(x, statistic=c("normal", "correlation", "pvalue"),
   plot=TRUE, color.figure=TRUE, verbose=TRUE, 
   cutoff.method=c("fndr", "pct0", "locfdr"),
   pct0=0.75)
@@ -18,8 +18,8 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue", "studentt"),
 
 \arguments{
   \item{x}{vector of the observed test statistics.}
-  \item{statistic}{one of "normal" (default), "correlation", "pvalue", 
-                   "studentt".  This species the null model.}
+  \item{statistic}{one of "normal" (default), "correlation", "pvalue".  
+         This species the null model.}
   \item{plot}{plot a figure with estimated densities, distribution functions, 
              and (local) false discovery rates.}
   \item{verbose}{print out status messages.}

@@ -3,6 +3,14 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.11
+
+- depends now on R (>=2.15.1)
+- updated reference to Klaus and Strimmer (2013)
+- small changes in documentation to get rid of warnings in current R-devel
+- option "studentt" was removed as "normal" is preferable in most cases.
+
+
                 CHANGES IN fdrtool VERSION 1.2.10
 
 - added two new functions for Higher Criticism (HC):  hc.score()

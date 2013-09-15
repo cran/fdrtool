@@ -1,9 +1,9 @@
-### fdrtool.R  (2012-07-25)
+### fdrtool.R  (2013-09-15)
 ###
 ###    Estimate (Local) False Discovery Rates For Diverse Test Statistics
 ###    
 ###
-### Copyright 2007-12 Korbinian Strimmer
+### Copyright 2007-13 Korbinian Strimmer
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
@@ -25,7 +25,8 @@
 
  
 fdrtool = function(x, 
-  statistic=c("normal", "correlation", "pvalue", "studentt"),
+  statistic=c("normal", "correlation", "pvalue"),
+  #statistic=c("normal", "correlation", "pvalue", "studentt"),
   plot=TRUE, color.figure=TRUE, verbose=TRUE, 
   cutoff.method=c("fndr", "pct0", "locfdr"),
   pct0=0.75)
