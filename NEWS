@@ -3,6 +3,12 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.12
+
+- removed DUP=FALSE option in .C() call in monoreg() as this option is
+  depricated in R 3.1.0.
+  
+
                 CHANGES IN fdrtool VERSION 1.2.11
 
 - depends now on R (>=2.15.1)

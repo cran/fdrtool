@@ -1,8 +1,8 @@
-### monoreg.R  (2007-07-06)
+### monoreg.R  (2014-04-15)
 ###
 ###     Monotone Regression
 ###
-### Copyright 2006-2007 Korbinian Strimmer 
+### Copyright 2006-2014 Korbinian Strimmer 
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
@@ -169,7 +169,7 @@ pvt.isoMean = function(y, w)
             as.double(y),
             as.double(w),
             as.integer(n),
-            ghat=double(n), PACKAGE="fdrtool", DUP=FALSE)$ghat
+            ghat=double(n), PACKAGE="fdrtool")$ghat
 
     return(ghat)
   }
