@@ -3,6 +3,11 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.13
+
+- change of maintainer email address.
+
+
                 CHANGES IN fdrtool VERSION 1.2.12
 
 - removed DUP=FALSE option in .C() call in monoreg() as this option is

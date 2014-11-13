@@ -1,9 +1,9 @@
 Package: fdrtool
-Version: 1.2.12
-Date: 2014-04-15
+Version: 1.2.13
+Date: 2014-11-13
 Title: Estimation of (Local) False Discovery Rates and Higher Criticism
 Author: Bernd Klaus and Korbinian Strimmer.
-Maintainer: Korbinian Strimmer <strimmer@uni-leipzig.de>
+Maintainer: Korbinian Strimmer <strimmerlab@gmail.com>
 Depends: R (>= 2.15.1)
 Suggests:
 Description: This package allows to estimate both tail area-based false 
@@ -18,7 +18,7 @@ Description: This package allows to estimate both tail area-based false
    empirical higher criticism (HC) scores and the corresponding decision threshold.
 License: GPL (>= 3)
 URL: http://strimmerlab.org/software/fdrtool/
-Packaged: 2014-04-15 22:07:06 UTC; strimmer
+Packaged: 2014-11-13 19:48:21 UTC; strimmer
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2014-04-16 00:55:06
+Date/Publication: 2014-11-14 08:16:34
