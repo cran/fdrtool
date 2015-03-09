@@ -3,6 +3,12 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.14
+
+- fix broken URLs in documentation.
+- fix "S3 generic/method consistency" NOTE raised by R-devel.
+
+
                 CHANGES IN fdrtool VERSION 1.2.13
 
 - change of maintainer email address.

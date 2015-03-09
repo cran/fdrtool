@@ -70,8 +70,7 @@ of "smoother".
 \author{
   Korbinian Strimmer (\url{http://strimmerlab.org}).
   
-  Adapted in part from S-PLUS code by  Y. Benjamini (\url{http://www.math.tau.ac.il/~roee/FDR_Splus.txt})
-  and R code from J.D. Storey (\url{http://faculty.washington.edu/~jstorey/}). 
+  Adapted in part from code by Y. Benjamini and J.D. Storey. 
 }
 \seealso{\code{\link{fdrtool}}.}
 

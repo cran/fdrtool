@@ -24,5 +24,9 @@ export(
 "sd2theta",	
 "theta2sd"
 )
+S3method("fitted", "monoreg")
+S3method("plot", "grenander")
+S3method("plot", "monoreg")
+S3method("residuals", "monoreg")
 
 useDynLib("fdrtool")
