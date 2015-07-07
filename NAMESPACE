@@ -1,4 +1,3 @@
-
 export(
 "censored.fit",
 "dcor0",	
@@ -29,4 +28,9 @@ S3method("plot", "grenander")
 S3method("plot", "monoreg")
 S3method("residuals", "monoreg")
 
+import("graphics")
+import("grDevices")
+import("stats")
+
 useDynLib("fdrtool")
+
