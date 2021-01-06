@@ -70,19 +70,18 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue"),
 }
 
 \author{
-  Korbinian Strimmer (\url{http://strimmerlab.org}).
+  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
 }
 \references{
 
   Strimmer, K. (2008a).   A unified approach to false discovery 
   rate estimation. BMC Bioinformatics 9: 303.
-  Available from \url{http://www.biomedcentral.com/1471-2105/9/303/}.
+  <DOI:10.1186/1471-2105-9-303>
 
   Strimmer, K. (2008b). fdrtool: a versatile R package for estimating 
   local and tail area- based false discovery rates.
   Bioinformatics 24: 1461-1462.
-  Available from \url{http://bioinformatics.oxfordjournals.org/cgi/content/abstract/24/12/1461}.
-
+  <DOI:10.1093/bioinformatics/btn209>
 }
 
 \seealso{\code{\link{pval.estimate.eta0}}, \code{\link{censored.fit}}.}

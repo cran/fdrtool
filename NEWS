@@ -3,6 +3,13 @@
             ========================================
 
 
+                CHANGES IN fdrtool VERSION 1.2.16
+
+- native C routines are now properly registrated.
+- observations of weight 0 are now automatically removed in monoreg()
+  (suggested by Daniel Leibovitz).
+
+
                 CHANGES IN fdrtool VERSION 1.2.15
 
 - add import statements required by R-devel.

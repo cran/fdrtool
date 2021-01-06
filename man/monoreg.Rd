@@ -59,7 +59,7 @@ monoreg(x, y=NULL, w=rep(1, length(x)), type=c("isotonic", "antitonic"))
 
 }
 \author{
-  Korbinian Strimmer (\url{http://strimmerlab.org}).
+  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
   
   Part of this function is C code that has been ported from
   R code originally written by Kaspar Rufibach. 

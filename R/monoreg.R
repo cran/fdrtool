@@ -1,8 +1,8 @@
-### monoreg.R  (2014-04-15)
+### monoreg.R  (2020-12-23)
 ###
 ###     Monotone Regression
 ###
-### Copyright 2006-2014 Korbinian Strimmer 
+### Copyright 2006-2020 Korbinian Strimmer 
 ###
 ### This file is part of the `fdrtool' library for R and related languages.
 ### It is made available under the terms of the GNU General Public
@@ -24,14 +24,21 @@
 # monotone regression
 
 monoreg = function(x, y=NULL, w=rep(1, length(x)), 
-   type=c("isotonic", "antitonic"))
-{
+    type=c("isotonic", "antitonic"))
+{ 
     # get x-y coordinates
     xy = xy.coords(x,y)
     x = xy$x
     y = xy$y
     
-    
+    if ( any(w == 0) )
+    {
+        warning("Weights of 0 detected!\nCorresponding observations are being removed.")
+        x = x[w != 0]
+        y = y[w != 0]
+        w = w[w != 0]
+    } 
+   
     # remove duplicated x values
     xvals = unique(x)
     lx = length(xvals)

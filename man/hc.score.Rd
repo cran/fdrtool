@@ -35,7 +35,7 @@ hc.thresh(pval, alpha0=1, plot=TRUE)
 }
 
 \author{
- Bernd Klaus and  Korbinian Strimmer (\url{http://strimmerlab.org}).
+ Bernd Klaus and  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
 }
 \references{
 
@@ -44,7 +44,7 @@ when useful features are rare and weak. Proc. Natl. Acad. Sci. USA 105:14790-157
 
 Klaus, B., and K. Strimmer (2013). Signal identification for rare and
 weak features: higher criticism or false discovery rates?
-Biostatistics 14: 129-143.  Preprint available from \url{http://arxiv.org/abs/1112.2615}.
+Biostatistics 14: 129-143. <DOI:10.1093/biostatistics/kxs030>
 }
 
 \seealso{\code{\link{fdrtool}}.}
