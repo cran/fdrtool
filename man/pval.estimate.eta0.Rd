@@ -68,7 +68,7 @@ of "smoother".
 
 }
 \author{
-  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+  Korbinian Strimmer (\url{https://strimmerlab.github.io}).
   
   Adapted in part from code by Y. Benjamini and J.D. Storey. 
 }

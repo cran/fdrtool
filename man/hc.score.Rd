@@ -35,7 +35,7 @@ hc.thresh(pval, alpha0=1, plot=TRUE)
 }
 
 \author{
- Bernd Klaus and  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+ Bernd Klaus and  Korbinian Strimmer (\url{https://strimmerlab.github.io}).
 }
 \references{
 

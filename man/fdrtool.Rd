@@ -70,7 +70,7 @@ fdrtool(x, statistic=c("normal", "correlation", "pvalue"),
 }
 
 \author{
-  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+  Korbinian Strimmer (\url{https://strimmerlab.github.io}).
 }
 \references{
 

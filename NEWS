@@ -3,6 +3,12 @@
             ========================================
 
 
+
+                CHANGES IN fdrtool VERSION 1.2.17
+
+- updated URLs.
+
+
                 CHANGES IN fdrtool VERSION 1.2.16
 
 - native C routines are now properly registrated.

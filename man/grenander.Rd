@@ -33,7 +33,7 @@ grenander(F, type=c("decreasing", "increasing"))
 
 }
 \author{
-  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+  Korbinian Strimmer (\url{https://strimmerlab.github.io}).
 }
 \references{
 

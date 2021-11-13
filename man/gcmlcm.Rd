@@ -42,7 +42,7 @@ gcmlcm(x, y, type=c("gcm", "lcm"))
 
 }
 \author{
-  Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+  Korbinian Strimmer (\url{https://strimmerlab.github.io}).
 }
 \seealso{\code{\link{monoreg}}.}
 

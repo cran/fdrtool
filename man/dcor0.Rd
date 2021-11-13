@@ -54,7 +54,7 @@ rcor0(n, kappa)
 \seealso{\code{\link{cor}}.}
 
 \author{
-   Korbinian Strimmer (\url{http://www.strimmerlab.org}).
+   Korbinian Strimmer (\url{https://strimmerlab.github.io}).
 }
 
 \examples{
