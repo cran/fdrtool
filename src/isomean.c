@@ -1,4 +1,7 @@
-/* isomean.c  (2007-07-06)  
+/* isomean.c  (2007-07-06)
+ *  
+ * minor change 2024-08-20: 
+ * use R_Calloc and R_Free rather than Calloc and Free
  *
  * Copyright 2007 Korbinian Strimmer
  *
@@ -41,8 +44,8 @@ void C_isomean(double* y, double* w, int* n, double* ghat)
   nn = *n; /* nn > 1 */
  
   /* allocate vector - error handling is done by R */
-  k = (int *) Calloc((size_t) nn, int);
-  gew = (double *) Calloc((size_t) nn, double);
+  k = (int *) R_Calloc((size_t) nn, int);
+  gew = (double *) R_Calloc((size_t) nn, double);
 
   c = 0;
   k[c] = 0;
@@ -79,7 +82,7 @@ void C_isomean(double* y, double* w, int* n, double* ghat)
   }
 
   /* free vector */
-  Free(k); 
-  Free(gew); 
+  R_Free(k); 
+  R_Free(gew); 
 }
 

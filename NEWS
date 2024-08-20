@@ -4,6 +4,13 @@
 
 
 
+                CHANGES IN fdrtool VERSION 1.2.18
+
+- use R_Calloc and R_free in isomean.c.
+- minimum version requirement is now R 3.4.0.
+- added Authors@R field in DESCRIPTION.
+
+
                 CHANGES IN fdrtool VERSION 1.2.17
 
 - updated URLs.
@@ -120,9 +127,9 @@
 
                 CHANGES IN fdrtool VERSION 1.2.0
 
-This version constitutes a major rewrite.  As a result, the
-interface to the main functions (especially to lesser used options)
-has been changed.  See manual for details.  Some specific changes include:
+- This version constitutes a major rewrite.  As a result, the
+  interface to the main functions (especially to lesser used options)
+  has been changed.  See manual for details.  Some specific changes include:
 
 - fit of null model using censored.fit() is now much more reliable.
 - estimates of null model parameter and null proportions now carry error bars.
@@ -172,9 +179,9 @@ has been changed.  See manual for details.  Some specific changes include:
 
 		CHANGES IN fdrtool VERSION 1.1.0
 
-This version contains some major new functionality.  In particular, it 
-now offers functions to estimate both tail area based Fdr as well as 
-density based fdr values for various kind of null models:
+- This version contains some major new functionality.  In particular, it 
+  now offers functions to estimate both tail area based Fdr as well as 
+  density based fdr values for various kind of null models:
 
 New functions:
 - fdrtool:       the central function for computing fdr/Fdr values.
@@ -197,7 +204,7 @@ Other:
 
 		CHANGES IN fdrtool VERSION 1.0.0
 
-This is the first standalone release (9 August 2006).
-Previously, the functions available in this package were part of
-the GeneTS package (version 2.10.2)
+- This is the first standalone release (9 August 2006).
+  Previously, the functions available in this package were part of
+  the GeneTS package (version 2.10.2)
       

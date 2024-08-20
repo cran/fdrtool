@@ -1,6 +1,6 @@
-6f2ea71a0b7108630d87b0d97f496697 *DESCRIPTION
+11625fb405e73bc1cfffc9ceb141467f *DESCRIPTION
 6b94ef01cb871fe488a0655010767a85 *NAMESPACE
-77761909e5cbb4c9367620b353392253 *NEWS
+401b5048e6c8302821e0c9add4eafcd7 *NEWS
 fb8a05a5983bcdac209e6f6a0ce5d570 *R/approximate.fit.R
 b65308906bf121a2588edcec600d5dba *R/censored.fit.R
 f38f86491f5602fb3daceb45c334d9f3 *R/dcor0.R
@@ -27,4 +27,4 @@ e8708077c556d19f7108014f1bc3d432 *man/hc.score.Rd
 101dc73352ed7833842ad5e4d74ce5f2 *man/pval.estimate.eta0.Rd
 5a83b31ae27d06e5a76967d96018982e *man/pvalues.Rd
 a856c3b1675fe2a952dcf2f6737d5897 *src/fdrtool_init.c
-6e76a11a518d68915d295d8ad3f14fbf *src/isomean.c
+f5f2fbc9d7d2112bbfefafcf22e0de30 *src/isomean.c
